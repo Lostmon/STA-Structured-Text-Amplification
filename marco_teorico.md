@@ -1,19 +1,25 @@
-# 🛡️ Android STA (Structured Text Amplification) Vulnerability Index
+# 🛡️ Marco Teórico — Structured Text Amplification (STA)
 
-> **Investigación técnica independiente desarrollada por Manuel García Peña ([@Lostmon](https://github.com))**  
-> *Un marco conceptual sobre la denegación de servicio algorítmica, fallos de resiliencia en canales IPC Binder, persistencia en SavedState e inestabilidad en el renderizado nativo de Android (libminikin).*
+> **Investigación técnica independiente desarrollada por Manuel García Peña ([@Lostmon](https://github.com/Lostmon))**
+> *Un modelo conceptual sobre denegación de servicio algorítmica, fallos de resiliencia en canales IPC Binder, persistencia en SavedState e inestabilidad en el renderizado nativo de Android.*
 
 ---
 
 ## 📢 Filosofía del Proyecto y Compromiso Social
-Esta investigación documenta fallos de código y demuestra resiliencia técnica y personal, respaldando los esfuerzos de salud mental de **BojosXtu**.
-*   **Bitácora oficial:** [lostmon.blogspot.com](https://lostmon.blogspot.com)
-*   **Iniciativa Social:** [BojosXtu en Instagram](https://www.instagram.com/p/DaxP36ntx58/)
-*   **Contacto:** bojosxtu@gmail.com · lostmon@gmail.com
+
+Esta investigación documenta fallos arquitectónicos mientras demuestra resiliencia técnica y personal. Todo el trabajo se realiza desde un entorno doméstico, con un teléfono de gama media, sin laboratorio ni acceso interno a código fuente. Su visibilidad respalda los esfuerzos de concienciación en salud mental promovidos por **BojosXtu**.
+
+- **Bitácora oficial:** [lostmon.blogspot.com](https://lostmon.blogspot.com)
+- **Iniciativa social:** [BojosXtu en Instagram](https://instagram.com/bojosxtu)
+- **Contacto:** bojosxtu@gmail.com · lostmon@gmail.com
 
 ---
 
-## 🔬 El Patrón Estructural STA: Marco Conceptual
+## 🔬 El Patrón Estructural STA: Definición Formal
+
+> *Structured Text Amplification (STA) es un patrón de amplificación de recursos arquitectónico en el que una entrada textual estructurada atraviesa múltiples capas software, causando un incremento progresivo del coste computacional, del consumo de memoria o de la propagación de estado, hasta superar los límites de estabilidad de uno o más componentes downstream.*
+
+**Pipeline general:**
 El patrón **STA (Structured Text Amplification)** define un modelo de explotación basado en la **asimetría de costes computacionales**, revelando una debilidad arquitectónica de más de una década en Android por la falta de validaciones tempranas de longitud y densidad antes de cruzar fronteras críticas del sistema.
 
 ---
