@@ -22,8 +22,6 @@ Esta investigación documenta fallos arquitectónicos mientras demuestra resilie
 
 **Pipeline general:**
 
-```
-
 Entrada estructurada (URL / HTML / Intent / Clipboard / Deep Link)
 ↓
 Parser / Validación (ausente o insuficiente)
@@ -42,9 +40,9 @@ SystemUI / recuperación OEM
 ↓
 Fallo observado (ANR / Crash Loop / Hard Reboot)
 
-```
 
-### 1.1 Propiedades recurrentes
+
+### Propiedades recurrentes
 
 | Propiedad | Descripción |
 |-----------|-------------|
@@ -102,7 +100,7 @@ El catálogo completo, con CVSS 3.1, nivel de evidencia (Tier A/B) y persistenci
 
 Los volcados de producción confirman bloqueos en el **hilo UI** superando el umbral de 5 segundos del watchdog de Android, con el hilo principal ejecutando código nativo en `libminikin.so`:
 
-```
+
 
 "main" prio=5 tid=1 Native   ← UI THREAD BLOCKED
 | state=R
@@ -114,7 +112,7 @@ native: minikin::LineBreakOptimizer::computeBreaks  ← O(n²) path
 native: minikin::breakLineOptimal             libminikin.so
 native: android::nComputeLineBreaks           libhwui.so
 
-```
+
 
 **BuildId de `libminikin.so`:** `4fabe53671b5ead88314c00a1fd6d67d`
 
