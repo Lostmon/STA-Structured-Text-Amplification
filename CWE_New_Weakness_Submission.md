@@ -184,7 +184,7 @@ Related platform mitigations, including selective handling of large payloads in 
 Research materials and references should be supplied with the submission and should identify the relevant public technical reports, reproducible observations, source-code references, and any related platform issue identifiers. Claims should be limited to what the referenced evidence demonstrates.
 
 **Research blog:**
-https://lostmon.blogspot.com/2026/08/sta-utf-16-serialization-density.html
+https://lostmon.blogspot.com/
 
 **Additional references:**
 - Android platform and framework source code relevant to `Task`, `TaskInfo`, `ActivityTaskManager`, `TaskOrganizer`, and Binder IPC.
