@@ -286,8 +286,7 @@ estado existente para entregarlo a otro consumidor.
 
 Ejemplo:
 
-\[ URI `\rightarrow `{=tex}Intent `\rightarrow `{=tex}TaskInfo
-`\rightarrow `{=tex}Parcel `\rightarrow `{=tex}Binder \]
+\[ URI→{=tex}Intent→{=tex}TaskInfo→{=tex}Parcel→{=tex}Binder \]
 
 El mismo contenido lógico puede aparecer en representaciones diferentes
 y ser serializado de forma independiente para varios consumidores.
