@@ -1264,19 +1264,91 @@ CWE_New_Weakness_Submission.md
 
 ## Investigación y cronología
 
--   Structured Text Amplification --- Marco conceptual.
--   Algorithmic DoS en libminikin.so.
--   libminikin: 10 años de vulnerabilidad en el núcleo de Android.
--   Timeline de la investigación STA.
--   STA --- UTF-16 Serialization Density Experiment.
--   Upstream Android and Chromium Changes in 2026.
--   Unbounded TaskInfo serialization in ActivityTaskManagerService.
--   STA in LLMs.
--   Structured Text Amplification en Gemini.
+## Referencias y Evidencia Documental
 
-## Blog oficial
+Esta sección centraliza todos los recursos públicos, análisis forenses y repositorios de código que sustentan la investigación sobre la Amplificación de Texto Estructurado (STA).
 
-https://lostmon.blogspot.com
+### 🔗 Repositorios y Recursos Principales
+
+| Recurso | Descripción | Enlace |
+| :--- | :--- | :--- |
+| **Repositorio Principal** | Código fuente, PoCs y laboratorio de pruebas STA. | [Lostmon/STA-Structured-Text-Amplification](https://github.com/Lostmon/STA-Structured-Text-Amplification) |
+| **Bitácora de Investigación** | Blog oficial con análisis técnicos, cronologías y avisos de seguridad. | [Lostmon Security Research](https://lostmon.blogspot.com) |
+
+---
+
+### 📄 Documentación Técnica y Whitepapers (Cronológico)
+
+#### 2026 — Fundamentos y Expansión
+
+- **[Timeline de STA (Julio 2026)](https://lostmon.blogspot.com/2026/07/timeline-de-sta.html)**  
+  Cronología completa de la investigación, desde los primeros hallazgos en 2022 hasta la formalización del modelo actual. Incluye la adición de STA-015-DL (CVSS 8.6) y STA-015b.
+
+- **[Resilience Gaps in Android IPC, SavedState and Text Layout (Julio 2026)](https://lostmon.blogspot.com/2026/07/resilience-gaps-in-android-ipc.html)**  
+  Whitepaper v6 que documenta la matriz completa de los primeros 32 vectores STA en Android.
+
+- **[libminikin: 10 años de vulnerabilidad en el núcleo de Android (Julio 2026)](https://lostmon.blogspot.com/2026/07/libminikin-10-anos-de-vulnerabilidad-en_0671440346.html)**  
+  Análisis forense del código fuente de AOSP (6 archivos, 5 capas) que confirma un fallo de diseño sistémico presente desde 2013. Incluye issues públicos de Google (2020–2026) cerrados sin solución estructural.
+
+- **[Algorithmic DoS en libminikin.so – Cómo un texto de 70 KB puede congelar casi cualquier app Android (Junio 2026)](https://lostmon.blogspot.com/2026/06/algorithmic-dos-en-libminikinso.html)**  
+  Análisis original del DoS algorítmico en la capa de tipografía nativa.
+
+- **[Algo se mueve en el Capó de Android (Junio 2026)](https://lostmon.blogspot.com/2026/06/algo-se-mueve-en-el-capo-de-android.html)**  
+  Documenta el commit de Chromium (mayo 2026) que cita explícitamente el AOSP CL 3989977, donde grandes payloads se pasan vía file descriptors.
+
+#### 2026 — Expansión a Motores Web y LLMs
+
+- **[STA en Gemini: Instruction Drift, Token Dumping y Generación de Código Rust Vulnerable (Octubre 2026)](https://lostmon.blogspot.com/2026/10/sta-en-gemini-instruction-drift-token.html)**  
+  Extiende el modelo STA a LLMs: la saturación del mecanismo de atención O(n²) provoca `Instruction Drift` y `Token Dumping`, induciendo a Gemini a generar código Rust con Integer Overflow / Heap Overflow (potencial RCE en el consumidor).
+
+- **[Microsoft Edge for Android: Ask Copilot Prompt Injection (Octubre 2026)](https://lostmon.blogspot.com/2026/10/microsoft-edge-for-android-ask-copilot.html)**  
+  Advisory ID `LOSTMON-2026-0718` · MSRC Case `VULN-202824`. Documenta cómo instrucciones embebidas en el contenido web influyen en la respuesta de Copilot tras la selección de texto por parte del usuario.
+
+- **[CWE New Weakness Submission (Octubre 2026)](https://lostmon.blogspot.com/2026/10/cwe-new-weakness-submission.html)**  
+  Propuesta formal a MITRE de la nueva clase de debilidad: *Unbounded Structured-State Propagation Across Processing Layers* (STA).
+
+- **[Google OSS VRP Pause: What It Means for STA Research (Octubre 2026)](https://lostmon.blogspot.com/2026/10/google-oss-vrp-pause.html)**  
+  Análisis del impacto de la pausa de OSS VRP en el ecosistema de divulgación y en el caso abierto de STA (A-477279924).
+
+#### 2026 — Análisis de Vectores Específicos
+
+- **[Three Vectors, One Root Cause — STA-003, STA-017, STA-020 (Septiembre 2026)](https://lostmon.blogspot.com/2026/09/three-vectors-one-root-cause-sta-003.html)**  
+  Confirma la reproducibilidad en Chrome 152 y Edge 2026. Los tres vectores convergen en `libminikin.so` y la frontera Binder de `IActivityTaskManager`. El boletín de seguridad de septiembre de 2026 no contiene parches para las rutas afectadas.
+
+- **[Upstream Convergence — STA Patterns in Android & Chromium (Septiembre 2026)](https://lostmon.blogspot.com/2026/09/upstream-convergence-sta-patterns-in.html)**  
+  Documenta commits de AOSP, AndroidX y Chromium durante 2026 que implementan defensas en las mismas fronteras Binder/IPC identificadas por STA. Convergencia funcional sustancial sin referencia explícita a STA.
+
+- **[New Forensic Evidence Confirms STA Remains Unpatched in Android 16 (Septiembre 2026)](https://lostmon.blogspot.com/2026/09/new-forensic-evidence-confirms-sta.html)**  
+  Evidencia forense de un bugreport completo de Android 16 que confirma que los vectores STA siguen siendo reproducibles en Chrome 152 y Edge 2026.
+
+- **[STA-006 / 007 Translate: When translating text crashes Google Apps (Agosto 2026)](https://lostmon.blogspot.com/2026/08/sta-006-007-translate-when-translating.html)**  
+  Documenta el vector de agotamiento de recursos en Google Translate (CWE-400 / CWE-770).
+
+- **[STA-003 When sharing an oversized link breaks the browser (Binder Share Intent) (Agosto 2026)](https://lostmon.blogspot.com/2026/08/sta-003-when-sharing-oversized-link.html)**  
+  Vector de DoS interactivo: un long-press + "Share" sobre un enlace sobredimensionado provoca `TransactionTooLargeException` y el cierre inmediato del navegador.
+
+- **[Unbounded TaskInfo serialization in ActivityTaskManagerService (Septiembre 2026)](https://lostmon.blogspot.com/2026/09/unbounded-taskinfo-serialization-in.html)**  
+  Informe técnico (STA Class A) sobre el crash-loop persistente en SystemUI y la cascada de `RescueParty` en HyperOS/MIUI. Documenta 32 crashes consecutivos y la escalada a reparación destructiva post-boot.
+
+---
+
+### 📡 Avisos de Seguridad y Divulgación (Advisories)
+
+| ID | Componente Afectado | Fecha | Estado |
+| :--- | :--- | :--- | :--- |
+| **LOSTMON-2026-0718** | Microsoft Edge (Ask Copilot) | 18/10/2026 | Publicado (PoC retenido) |
+| **A-477279924** | Google Android VRP (AOSP TaskInfo) | 20/01/2026 | Abierto / En revisión |
+| **#4064049** | Xiaomi HyperOS (RescuePartyPlus) | 27/09/2026 | Cerrado (Informativo) |
+
+---
+
+> [!NOTE]
+> **Nota sobre Divulgación Coordinada**  
+> Toda la evidencia técnica, los PoCs y los bugreports crudos han sido compartidos previamente con los respectivos equipos de seguridad (Google VRP, Microsoft MSRC, OpenAI Bugcrowd, MITRE) antes de su publicación pública, siguiendo un estricto protocolo de ventana de 90 días.
+
+---
+
+*Documentación mantenida por [Manuel García Peña (@Lostmon)](https://github.com/Lostmon). Última actualización: Octubre 2026.*
 
 ## Referencias técnicas externas
 
