@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structured Text Amplification (STA) v6.0 — Full Technical Whitepaper · Lostmon 2026</title>
+<style>
+:root{--navy:#1F3864;--blue:#2255AA;--red:#CC2200;--amber:#CC7700;--green:#226622;
+--lgrey:#F5F5F5;--mgrey:#CCCCCC;--dgrey:#555;--white:#fff;
+--red2:#FFF0EE;--amb2:#FFF8E8;--grn2:#EFFFEE;--blu2:#EEF3FF;--gry2:#F9F9F9;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#333;background:#fff;line-height:1.65;}
+.page{max-width:980px;margin:0 auto;padding:28px 36px 60px;}
+@media print{
+  .page{max-width:100%;padding:10mm 14mm;}
+  .no-print{display:none;}
+  h1{page-break-before:always;}
+  h1:first-of-type,h1.no-break{page-break-before:avoid;}
+  table,pre,.ib{page-break-inside:avoid;}
+}
+.doc-header{text-align:center;padding:24px 0 20px;border-bottom:3px solid var(--blue);margin-bottom:24px;}
+.doc-title{font-size:22px;font-weight:bold;color:var(--navy);line-height:1.25;margin-bottom:7px;}
+.doc-sub{font-size:12px;color:var(--blue);font-style:italic;margin-bottom:8px;}
+.doc-auth{font-size:11px;color:var(--dgrey);margin-bottom:5px;}
+.doc-conf{font-size:11px;color:var(--red);font-weight:bold;margin-top:6px;}
+h1{font-size:16px;color:var(--navy);border-bottom:2px solid var(--blue);padding-bottom:4px;margin:28px 0 12px;}
+h2{font-size:13px;color:var(--blue);margin:20px 0 9px;font-weight:bold;}
+h3{font-size:11.5px;color:#333;margin:14px 0 7px;text-transform:uppercase;letter-spacing:.03em;font-weight:bold;}
+p{margin-bottom:9px;}
+hr{border:none;border-top:1px solid #ddd;margin:22px 0;}
+hr.thick{border-top:2px solid var(--blue);margin:28px 0 24px;}
+.ib{padding:10px 14px;margin:11px 0;font-size:12px;line-height:1.6;}
+.ib-red{background:var(--red2);border:1px solid #ffbbaa;border-left:4px solid var(--red);}
+.ib-amb{background:var(--amb2);border:1px solid #e8cc88;border-left:4px solid var(--amber);}
+.ib-grn{background:var(--grn2);border:1px solid #aaddaa;border-left:4px solid var(--green);}
+.ib-blu{background:var(--blu2);border:1px solid #bbccff;border-left:4px solid var(--blue);}
+.ib-gry{background:var(--gry2);border:1px solid #ddd;border-left:4px solid #888;}
+.ib p{margin:2px 0;}
+pre{background:#f5f5f5;border:1px solid #ccc;border-left:3px solid var(--blue);
+padding:9px 13px;font-family:'Courier New',monospace;font-size:11px;line-height:1.5;
+overflow-x:auto;white-space:pre;margin:9px 0;color:#222;}
+table{width:100%;border-collapse:collapse;margin:11px 0;font-size:11.5px;}
+table.kv td:first-child{background:#f0f0f0;font-weight:bold;width:30%;white-space:nowrap;}
+th{background:var(--blue);color:#fff;padding:5px 8px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;}
+td{padding:5px 8px;border-bottom:1px solid #eee;vertical-align:top;}
+tr:nth-child(even) td{background:#f9f9f9;}
+tr:hover td{background:#eef3ff;}
+td.id{font-family:'Courier New',monospace;color:var(--blue);font-weight:bold;white-space:nowrap;font-size:11px;}
+td.cvss8{color:#7700cc;font-weight:bold;}td.cvss7{color:var(--red);font-weight:bold;}
+td.cvss6{color:var(--amber);font-weight:bold;}td.cvss5,td.cvss3{color:var(--blue);font-weight:bold;}
+td.ta{color:var(--green);font-weight:bold;}td.tb{color:var(--dgrey);}
+td.yes{color:var(--red);font-weight:bold;font-size:11px;}
+td.no{color:#888;font-size:11px;}td.auto{color:var(--amber);font-size:11px;}
+.nb{background:var(--green);color:#fff;font-size:9px;font-weight:bold;
+padding:1px 5px;border-radius:2px;margin-left:6px;vertical-align:middle;}
+.toc{background:#f9f9f9;border:1px solid #ddd;padding:14px 18px;margin:18px 0;}
+.toc h2{margin-top:0;color:var(--navy);}
+.toc ol{margin:0;padding-left:18px;}
+.toc li{padding:2px 0;font-size:12px;}
+.toc a{color:var(--blue);text-decoration:none;}
+.toc a:hover{text-decoration:underline;}
+ul,ol{padding-left:22px;margin-bottom:9px;}
+li{margin-bottom:3px;}
+.quote{font-style:italic;color:#555;border-left:3px solid #ccc;padding-left:14px;margin:12px 0;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="doc-header">
+<div class="doc-title">Structured Text Amplification (STA)</div>
+<div class="doc-sub">Architectural Model + Full Technical Evidence of Resilience Gaps in Android IPC, SavedState and Text Layout</div>
+<div class="doc-auth">Manuel García Peña (Lostmon) · lostmon@gmail.com · lostmon.blogspot.com</div>
+<div class="doc-conf">Version 6.0 — Consolidated Edition · Merges the original v1.0/v1.1 Structural Amplification study (context-menu, share-intent and Fragment-nesting evidence) into the v5 field-evidence report (libminikin, SystemUI, cross-vendor bugreports)</div>
+</div>
+
+<table class="kv">
+<tr><td>Full title</td><td>Structured Text Amplification (STA) — An Architectural and Technical Study of Text-Driven Resource Amplification Across the Android Ecosystem</td></tr>
+<tr><td>Version</td><td><strong>v6.0</strong> — Consolidated Edition, updated through the August 2026 field evidence and vendor correspondence</td></tr>
+<tr><td>Researcher</td><td>Manuel García Peña (Lostmon)</td></tr>
+<tr><td>Vectors</td><td>32 documented (Class A IPC/SavedState + Class B UI-thread/libminikin)</td></tr>
+<tr><td>Companies notified</td><td>Google · Meta · Microsoft · Mozilla · Opera · DuckDuckGo · Brave · Tor Project · Xiaomi · INCIBE (CNA Spain)</td></tr>
+<tr><td>Also affected</td><td>Samsung (STA-023 series — documented)</td></tr>
+<tr><td>Public disclosure</td><td>30 July 2026 — lostmon.blogspot.com</td></tr>
+</table>
+
+<div class="ib ib-blu">
+<p><strong>CLASS A — IPC State Amplification:</strong> absent safe fallback in FragmentManager.restoreAllState() and system services when serialized SavedState exceeds the Binder limit. Result: persistent crash loops.</p>
+<p><strong>CLASS B — Interaction Surface Amplification:</strong> absent defensive limits on synchronous URL/text processing in Android’s text layout engine (libminikin.so). Result: reproducible ANR across Chromium and Gecko engines.</p>
+<p><strong>Architectural frame:</strong> Both classes are concrete manifestations of the same higher-level pattern — Structured Text Amplification (STA).</p>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2><ol>
+<li><a href="#exec">Executive Summary</a></li>
+<li><a href="#threat">Threat Model</a></li>
+<li><a href="#method">Testing Methodology</a></li>
+<li><a href="#context">Research Context</a></li>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#sta-model">1. Structured Text Amplification — Architectural Model</a></li>
+<li><a href="#class-ab">2. Class A vs Class B — Concrete Mechanisms</a></li>
+<li><a href="#root-cause">3. Root Cause Detail</a></li>
+<li><a href="#affected-browsers">4. Affected Browsers (12 Confirmed)</a></li>
+<li><a href="#taxonomy">5. Evidence Taxonomy</a></li>
+<li><a href="#sta017">6. STA-017 — Cross-Engine ANR (Tier A Evidence)</a></li>
+<li><a href="#sta027">6b. STA-027 — Edge Ask Copilot Deep Link Amplification (★NEW)</a></li>
+<li><a href="#aosp">7. AOSP Commit Evidence</a></li>
+<li><a href="#field">8. Field Evidence — Android 16</a></li>
+<li><a href="#catalog">9. Complete Vector Catalog — 33 Vectors</a></li>
+<li><a href="#impact-matrix">9b. Impact Matrix</a></li>
+<li><a href="#sta001">9c. STA-001/003 — Context Menu &amp; Share Intent</a></li>
+<li><a href="#whatsapp">10. STA-005 — WhatsApp Variants</a></li>
+<li><a href="#systemui">11. STA-015 Series — SystemUI Vectors</a></li>
+<li><a href="#firefox">12. STA-019 — Firefox Four Failure Modes</a></li>
+<li><a href="#chrome-edge">13. STA-020/021 — Chrome/Edge/Brave Address Bar</a></li>
+<li><a href="#duck">14. STA-022 — DuckDuckGo</a></li>
+<li><a href="#samsung">14b. STA-023 — Samsung Internet: Three Failure Modes</a></li>
+<li><a href="#ios">15. Cross-Platform Validation — iOS</a></li>
+<li><a href="#fixes">16. Recommended Fixes (Framework + Application)</a></li>
+<li><a href="#vendor">17. Vendor Notification Status</a></li>
+<li><a href="#timeline">18. Disclosure Timeline</a></li>
+<li><a href="#glossary">19. Glossary</a></li>
+<li><a href="#limitations">20. Limitations and Future Work</a></li>
+<li><a href="#conclusion">21. Conclusion</a></li>
+<li><a href="#refs">References</a></li>
+<li><a href="#appI">Appendix I — External Corroboration</a></li>
+<li><a href="#appII">Appendix II — Vendor Conduct & Acknowledgements: Xiaomi</a></li>
+</ol></div>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- EXECUTIVE SUMMARY                                             -->
+<!-- ============================================================ -->
+<h1 class="no-break" id="exec">Executive Summary</h1>
+
+<p>This whitepaper documents <strong>Structured Text Amplification (STA)</strong>, an architectural pattern in which valid structured textual input (URLs, deep links, drafts, Intent extras) propagates through Android framework layers and progressively amplifies computational cost or state size until stability limits are exceeded.</p>
+
+<p><strong>Five key findings:</strong></p>
+<ol>
+<li><strong>An internal fix for parts of the Class A root cause exists but is not public.</strong> Google’s LargePayloadSupport (AOSP CL 3989977) and androidx.savedstate 1.5.0 address part of the Class A root cause; the July 2026 Android Security Bulletin contained <em>no</em> public patches for any STA vector.</li>
+<li><strong>32 reproducible vectors</strong> across Class A (IPC/SavedState crash loops) and Class B (libminikin ANR), confirmed on production devices running Android 13–16.</li>
+<li><strong>Independent vendor validation.</strong> Xiaomi reproduced, confirmed and rewarded a persistent HyperOS vector (STA-015b). INCIBE (CNA Spain) reviewed technical reports and PoCs and referred the case to MITRE (CNA Top-Level Root for the Google ecosystem) for CVE assignment.</li>
+<li><strong>Highest impact: STA-015-DL (CVSS 8.6).</strong> A single click on a Google Drive HTML link can escalate to a SystemUI crash loop requiring a hard reboot. Scope is Changed (browser is delivery vehicle; SystemUI is the target).</li>
+<li><strong>Cross-engine, cross-vendor.</strong> The same libminikin blocking path appears in Chromium and Gecko; the same persistence pattern appears in WhatsApp, Threads, Firefox, Opera, DuckDuckGo, Edge Ask Copilot and core system services.</li>
+</ol>
+
+<div class="ib ib-red">
+<p><strong>Primary recommendation:</strong> Framework-level hard length thresholds in <code>libminikin</code> and safe degradation (try/catch + discard) in FragmentManager / TaskPersister / SystemUI restore paths. Application-level URL and draft size caps are necessary but insufficient defense-in-depth.</p>
+</div>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- THREAT MODEL                                                  -->
+<!-- ============================================================ -->
+<h1 id="threat">Threat Model</h1>
+
+<table>
+<tr><th></th><th>Class A — IPC / SavedState</th><th>Class B — libminikin / UI thread</th></tr>
+<tr><td><strong>Attacker</strong></td><td>Remote (crafted link, Drive HTML, deep link) or local (paste large text)</td><td>Remote (crafted URL/link) or local (long-press, focus address bar)</td></tr>
+<tr><td><strong>Victim</strong></td><td>Android 13–16 users of WhatsApp, Threads, browsers, SystemUI, OEM skins</td><td>Any app rendering long structured text via TextView / Compose / context menu</td></tr>
+<tr><td><strong>Prerequisites</strong></td><td>One click or paste; no special privileges</td><td>One click, long-press or focus event; no special privileges</td></tr>
+<tr><td><strong>Goal</strong></td><td>Persistent DoS (crash loop until data clear / reboot)</td><td>Transient DoS (ANR 5–16 s); can become persistent if combined with history/TaskPersister</td></tr>
+<tr><td><strong>Impact scope</strong></td><td>Single app → shared inbox → SystemUI (device UI)</td><td>Browser / app UI thread; can cascade into SystemUI on some OEMs</td></tr>
+</table>
+
+<p><strong>Assumptions:</strong> Attacker can deliver a syntactically valid but oversized structured payload (URL, draft, Intent extra). No memory corruption or code execution is required. The attack relies solely on missing defensive limits and missing safe-degradation paths.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- METHODOLOGY                                                   -->
+<!-- ============================================================ -->
+<h1 id="method">Testing Methodology</h1>
+
+<p>Research was conducted with <strong>direct reproduction across seven physical production devices</strong> spanning six OEM personalization layers, running stock or OEM firmware (no custom ROMs, no root required for primary evidence). Every device below was directly tested by the researcher — not merely reported by a third party — to verify the observed behaviours were not an artefact of a single OEM’s customization layer.</p>
+<table>
+<tr><th>OEM</th><th>Device</th><th>Platform / Skin</th><th>Android version</th><th>Notes</th></tr>
+<tr><td rowspan="3">Xiaomi</td><td rowspan="3">Redmi Note 14 5G</td><td>HyperOS 2.0</td><td>Android 14</td><td>Initial configuration, prior to OTA update</td></tr>
+<tr><td>HyperOS 3.0</td><td>Android 15</td><td>Post-OTA</td></tr>
+<tr><td>HyperOS 3.0.3.0.301.0.WOQEUXM</td><td>Android 16</td><td>Primary field evidence device (build BP2A.250605.031.A3)</td></tr>
+<tr><td>Google</td><td>Pixel 7</td><td>Stock AOSP-derived</td><td>Android 13–15</td><td>&nbsp;</td></tr>
+<tr><td>Samsung</td><td>Galaxy A17</td><td>One UI</td><td>Android 15</td><td>&nbsp;</td></tr>
+<tr><td>OPPO</td><td>A6 5G</td><td>ColorOS 16</td><td>Android 16</td><td>Security patch level 1 June 2026</td></tr>
+<tr><td>OPPO</td><td>A78 5G</td><td>ColorOS 15</td><td>Android 15</td><td>&nbsp;</td></tr>
+<tr><td>OnePlus</td><td>OnePlus 11</td><td>OxygenOS</td><td>Android 13</td><td>&nbsp;</td></tr>
+<tr><td>Lenovo</td><td>Tab M11 Wi-Fi</td><td>Lenovo Android skin</td><td>Android 15</td><td>Only tablet form factor in the sample</td></tr>
+</table>
+<p>Coverage spans four distinct OEM personalization layers on top of AOSP (HyperOS, One UI, ColorOS, OxygenOS) plus stock Pixel and a tablet form factor, across Android 13 through 16. The primary Xiaomi device was tested across three configurations spanning a real OTA update path (HyperOS 2/Android 14 → HyperOS 3/Android 15 → HyperOS 3/Android 16), confirming the behaviour persists across an in-place platform upgrade on the same hardware, not only across different devices. The recurrence of the identical <code>libminikin.so</code> code paths and the identical <code>FragmentManager</code>/Binder failure pattern across this range — rather than on a single vendor’s firmware — supports treating Structured Text Amplification as a platform-level AOSP characteristic rather than an OEM-specific defect.</p>
+<p>A substantial portion of framework path analysis was performed by reading public AOSP sources from a phone browser (no traditional multi-monitor lab). Bugreports and ANR traces were captured on-device and via <code>adb</code> where available. Google VRP rewarded the Binder/IPC research area ($250); Xiaomi independently confirmed and rewarded a HyperOS vector ($300 via HackerOne).</p>
+
+<p><strong>Tools and artefacts:</strong></p>
+<ul>
+<li><code>adb bugreport</code> / full bugreport ZIPs (DROPBOX SYSTEM APP CRASHES, ANR traces, tombstones)</li>
+<li><code>adb logcat</code> filtered for SystemUI, ActivityTaskManager, libminikin, TransactionTooLargeException</li>
+<li><code>chrome://crashes</code> report IDs (uploaded to Google infrastructure)</li>
+<li>Native stack unwinding from ANR traces (libminikin.so BuildId confirmed)</li>
+<li>AOSP source inspection for FragmentManager, TaskPersister, LineBreakOptimizer</li>
+</ul>
+
+<p>Generalizations to “all Android OEMs” or “all versions” are <strong>inferences from this sample</strong>, not exhaustive enumeration. Behaviour can vary with OEM patches, available memory and security bulletin level. iOS was used as a negative control (same payloads do not reproduce the Android-specific failures).</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- RESEARCH CONTEXT                                              -->
+<!-- ============================================================ -->
+<h1 id="context">Research Context</h1>
+
+<p>This work is independent security research conducted over approximately four years (observations from 2022; formal STA framing and expanded evidence through July 2026). It was not performed in a traditional multi-monitor laboratory environment.</p>
+
+<p><strong>Primary conditions:</strong></p>
+<ul>
+<li><strong>Lead researcher:</strong> Manuel García Peña (Lostmon), independent researcher; president of BojosXtu (mental-health support association).</li>
+<li><strong>Primary device:</strong> Xiaomi Redmi Note 14 5G (HyperOS 3.0 / Android 16) — field bugreports, SystemUI crash statistics, and native ANR stacks were captured on this handset under normal use and controlled reproduction.</li>
+<li><strong>Analysis setup:</strong> A substantial share of AOSP path reconstruction (TextView → StaticLayout → LineBreaker → libminikin; FragmentManager / TaskPersister / SystemUI) was done by reading public Android source in a phone browser, following call chains function by function when concentration allowed.</li>
+<li><strong>Cross-OEM validation:</strong> Additional devices (Pixel, Samsung, OPPO, OnePlus and others) were made available through the independent research community so that behaviour could be checked beyond a single manufacturer.</li>
+<li><strong>Vendor outcomes (selected):</strong> Google Android VRP rewarded the Binder/IPC research area ($250, case A-477279924); that case remains open and in active triage as of this disclosure. A separate Chrome VRP filing covering 27 vectors (Issue 477202817) was closed the <strong>same day</strong> as “Won’t Fix (Intended Behavior).” A further libminikin-specific Android VRP report was closed “Out of Scope,” and the subsequent appeal (Issue 526330835) was closed “Not Reproducible” on July 21, 2026. <strong>Following the August 2026 Android Security Bulletin, the Android Security Team confirmed by email (Aug 4, 2026) that engineering is “actively looking into this issue and working on a fix,”</strong> after the researcher shared a post-publication correlation analysis between the July Chromium patch set and the STA surfaces. Xiaomi independently reproduced a persistent HyperOS vector and awarded a bounty via HackerOne ($300). Other vendors received reports with mixed classifications (see Section 17–18).</li>
+</ul>
+
+<p>The technical claims in this whitepaper stand on bugreports, native stacks, measured Bundle sizes, and public AOSP inspection. The research context is included so readers understand the constraints under which the evidence was gathered — not as a substitute for that evidence.</p>
+
+<p>Narrative account of the investigation (Spanish): <a href="https://lostmon.blogspot.com/2026/07/desafiar-android-desde-el-sofa-y-un.html" target="_blank" rel="noopener">Desafiar Android desde el sofá y un smartphone</a> (17 July 2026). Timeline and related technical posts are listed under <a href="#refs">References</a>.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- ABSTRACT                                                      -->
+<!-- ============================================================ -->
+<h1 class="no-break" id="abstract">Abstract</h1>
+
+<p>Android applications continuously process structured textual input originating from web pages, messaging platforms, documents, deep links, accessibility services, inter-process communication (IPC) and user-generated content.</p>
+
+<p>Over approximately four years of independent analysis, <strong>32 reproducible attack vectors</strong> were documented across multiple Android subsystems. Although these vectors differ in entry points, affected applications and observable behaviour, they consistently exhibit a common architectural characteristic: <strong>structured textual input propagates through several framework layers while progressively amplifying computational cost, memory pressure or internal application state until stability boundaries are exceeded</strong>.</p>
+
+<p>This recurring behaviour is defined as <strong>Structured Text Amplification (STA)</strong>.</p>
+
+<p>STA is not a single vulnerability. It is an architectural resource-amplification pattern. It materialises in two primary concrete forms:</p>
+
+<ul>
+<li><strong>Class A — IPC / SavedState Amplification</strong>: when serialized state exceeds the Binder transaction limit (1 048 576 bytes), Android has no safe degradation path. The TransactionTooLargeException propagates uncaught, the app (or SystemUI) crashes, and the same oversized state is re-persisted → permanent crash loop.</li>
+<li><strong>Class B — Interaction Surface Amplification</strong>: algorithmic complexity inside Android’s native text layout engine (<code>libminikin.so</code>) produces reproducible ANRs across Chromium and Gecko when processing oversized but syntactically valid structured URLs/text.</li>
+</ul>
+
+<p>The most severe chain (STA-015-DL) escalates from a single click on a Google Drive HTML link to a SystemUI crash loop requiring a hard reboot (CVSS 8.6). The same underlying amplification principles appear in WhatsApp, Threads, Firefox, Opera, DuckDuckGo, Brave, Samsung Internet and core framework components.</p>
+
+<p>This unified whitepaper presents both the architectural model that explains the common pattern and the complete technical evidence (native stack traces, production bugreports, AOSP commit analysis, CVSS scores and vendor responses) that substantiates it.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 1. STA MODEL                                                  -->
+<!-- ============================================================ -->
+<h1 id="sta-model">1. Structured Text Amplification — Architectural Model</h1>
+
+<div class="ib ib-amb">
+<p><strong>Fact vs. interpretation:</strong> The STA model is an architectural interpretation proposed by the researcher to explain recurring patterns observed across multiple vectors. Empirical evidence (native stack traces, production bugreports, measured Bundle sizes, vendor confirmations) is presented in the corresponding technical sections. Amplification factors and the unified model itself should be treated as analytical conclusions, not as factory-documented behaviour.</p>
+</div>
+
+<h2>1.1 Formal Definition</h2>
+<div class="quote">
+Structured Text Amplification (STA) is an architectural resource amplification pattern in which structured textual input traverses multiple software layers, causing progressively increasing computational cost, memory consumption or state propagation that may ultimately exceed the stability limits of one or more downstream components.
+</div>
+
+<p>Unlike a traditional software vulnerability, STA does not represent a single implementation defect or memory corruption. The amplification emerges from the interaction between multiple independent components that sequentially transform, validate, serialize, deserialize, render, persist or redistribute the same logical data. Each component may operate correctly in isolation; the cumulative effect becomes significantly larger than anticipated by any individual subsystem.</p>
+
+<h2>1.2 Recurring Characteristics</h2>
+<table>
+<tr><th>Property</th><th>Description</th></tr>
+<tr><td>Structured Input</td><td>Hierarchical or encoded textual information (URLs, HTML, JSON, Intent extras, Markdown…), not arbitrary binary data.</td></tr>
+<tr><td>Multi-stage Processing</td><td>The same logical content traverses multiple independent framework layers.</td></tr>
+<tr><td>Progressive Amplification</td><td>Processing cost increases at successive stages.</td></tr>
+<tr><td>Shared Infrastructure</td><td>Unrelated applications reuse identical Android framework components (libminikin, FragmentManager, TaskPersister, SystemUI…).</td></tr>
+<tr><td>Non-linear Behaviour</td><td>Resource consumption frequently disproportionate to input size.</td></tr>
+<tr><td>Cross-component Impact</td><td>Failures appear far from the original entry point (e.g. browser click → SystemUI crash).</td></tr>
+</table>
+
+<h2>1.3 General Amplification Pipeline</h2>
+<pre>
+Structured Input (URL / HTML / Intent / Clipboard / Deep Link)
+        ↓
+Parser / Validation
+        ↓
+Framework APIs
+        ↓
+Binder IPC
+        ↓
+Rendering Engine (TextView → StaticLayout → LineBreaker → <b>libminikin</b>)   ← Class B
+        ↓
+Layout / Compose
+        ↓
+State Persistence (TaskPersister / SavedStateRegistry)                   ← Class A
+        ↓
+SystemUI / OEM recovery
+        ↓
+Observed Failure (ANR / Crash Loop / Hard Reboot)
+</pre>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 2. CLASS A vs CLASS B                                         -->
+<!-- ============================================================ -->
+<h1 id="class-ab">2. Class A vs Class B — Concrete Mechanisms</h1>
+
+<p><strong>Table 1.</strong> Comparison of the two concrete amplification mechanisms under the STA model. Rows marked “Observed factor” and “Result” are empirical; “Primary fix owner” is a proposed responsibility assignment.</p>
+<table>
+<tr><th></th><th>Class A — IPC / SavedState Amplification</th><th>Class B — Interaction Surface Amplification</th></tr>
+<tr><td><strong>Mechanism</strong></td><td>SavedState serialization → Bundle → Parcel → Binder &gt; 1 MB</td><td>Synchronous text layout on UI thread (libminikin line breaking)</td></tr>
+<tr><td><strong>Resource exhausted</strong></td><td>Binder transaction buffer (1 048 576 bytes)</td><td>Main thread CPU time (ANR threshold ~5 s)</td></tr>
+<tr><td><strong>Amplification driver</strong></td><td>Fragment nesting depth + metadata (architectural)</td><td>URL character composition (# / % €) (content-driven)</td></tr>
+<tr><td><strong>Observed factor</strong></td><td>×2.8 to ×20.6 (WhatsApp field measurement)</td><td>10–20× multiplier before O(n²)/blocking</td></tr>
+<tr><td><strong>Result</strong></td><td>TransactionTooLargeException → permanent crash loop</td><td>Main thread block → ANR (5–16 s)</td></tr>
+<tr><td><strong>Persistence</strong></td><td>Yes — until data cleared or reboot</td><td>No (unless combined with history / TaskPersister)</td></tr>
+<tr><td><strong>Primary fix owner</strong></td><td>Google / AOSP (FragmentManager + SystemUI + TaskPersister)</td><td>Google / AOSP (libminikin) + browser vendors (defense-in-depth)</td></tr>
+</table>
+
+<div class="ib ib-amb">
+<p><strong>Two distinct amplification models that share a common root-cause category</strong> (absent input validation before expensive operations), but are not reducible to a single mathematical model. The fix for one does not address the other.</p>
+</div>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 3. ROOT CAUSE                                                 -->
+<!-- ============================================================ -->
+<h1 id="root-cause">3. Root Cause Detail</h1>
+
+<p>This section separates <strong>documented platform behaviour</strong> (Binder limit, missing catch in restore paths, measured Bundle sizes, native stacks) from the <strong>researcher’s interpretation</strong> (STA as a unifying pattern) and from <strong>proposed mitigations</strong> (Section 16).</p>
+
+<h2>3.1 What IS “Working as Intended”</h2>
+<div class="ib ib-gry"><p>The 1 MB Binder limit is intentional. An app storing large data in a Bundle and hitting the limit is a documented consequence of misusing the mechanism — not a vulnerability by itself. This report does not claim the Binder limit or Fragment nesting are bugs.</p></div>
+
+<h2>3.2 The Real Problem — Absent Safe Fallback (Class A)</h2>
+<p>When <code>FragmentManager.restoreAllState()</code> encounters a Bundle exceeding the Binder limit, Android has no safe degradation mechanism. The TransactionTooLargeException propagates uncaught, the process crashes, and the same oversized state is persisted to disk for the next launch → permanent crash loop the user cannot escape without clearing application data.</p>
+
+<pre>
+// Current Android behaviour — no safe fallback
+void restoreAllState(Bundle savedState) {
+    // No try-catch. TransactionTooLargeException propagates uncaught.
+    // Same oversized state re-persisted → crash loop on next launch.
+    fragmentManager.restoreState(savedState);
+}
+
+// Recommended — safe degradation
+void restoreAllState(Bundle savedState) {
+    try {
+        if (isBundleOverLimit(savedState)) {
+            Log.e(TAG, "SavedState over limit — discarding for safe restart");
+            return;  // clean start — no crash loop
+        }
+        fragmentManager.restoreState(savedState);
+    } catch (TransactionTooLargeException e) {
+        // safe degradation: app starts as if first launch
+    }
+}
+</pre>
+
+<h2>3.3 Empirical Amplification — WhatsApp Android 15 (×20.6)</h2>
+<pre>
+W/Bundle: childFragmentManager [L1]  size=1,636,412
+W/Bundle: childFragmentManager [L2]  size=1,614,072
+W/Bundle: childFragmentManager [L3]  size=1,603,852
+W/Bundle: registryState             size=  479,948
+W/Bundle: compose_text (origin)     size=   80,484  ← input data
+W/Bundle: TOTAL                     size=1,661,088  ← +58% over Binder limit
+// Binder limit: 1,048,576 bytes · Overflow: +612,512 bytes · Factor: ×20.6
+</pre>
+
+<table>
+<tr><th>Input</th><th>Fragment depth</th><th>Bundle</th><th>Factor</th><th>Exceeds limit</th></tr>
+<tr><td>10,000 bytes</td><td>2 levels</td><td>~28,000</td><td>×2.8</td><td class="no">No</td></tr>
+<tr><td>50,000 bytes</td><td>4 levels</td><td>~275,000</td><td>×5.5</td><td class="no">No</td></tr>
+<tr><td>80,000 bytes</td><td>5 levels+meta</td><td>~1,021,000</td><td>×12.8</td><td class="auto">Near</td></tr>
+<tr><td>82,431 bytes</td><td>5 levels+meta</td><td>~1,124,352</td><td>×13.6</td><td class="yes">YES</td></tr>
+<tr><td>80,484 bytes</td><td>5 lvls+Meta AI</td><td>~1,661,088</td><td>×20.6</td><td class="yes">YES +58%</td></tr>
+</table>
+
+<h2>3.4 Class B — libminikin Algorithmic Amplification</h2>
+<p>Characters with special meaning in URLs force the line-breaking algorithm to evaluate many more break candidates:</p>
+<pre>
+# — creates a logical boundary, doubling break decisions
+/ — each slash adds a candidate break point
+% — expands UTF-8 to UTF-16 and fragments the string
+€ — ambiguous line-break properties force algorithm to explore both options
+
+// Combined pattern: %E2%A0%80%E2%82%AC%23
+// Multiplies algorithmic cost by 10-20x BEFORE O(n²) or greedy blocking applies
+</pre>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 4. AFFECTED BROWSERS                                          -->
+<!-- ============================================================ -->
+<h1 id="affected-browsers">4. Affected Browsers (12 Confirmed)</h1>
+
+<table>
+<tr><th>Engine family</th><th>Browsers</th></tr>
+<tr><td><strong>Chromium-based</strong></td><td>Google Chrome, Microsoft Edge, Microsoft Bing, Opera Browser, DuckDuckGo Browser, Brave Browser, Samsung Internet</td></tr>
+<tr><td><strong>Gecko-based</strong></td><td>Mozilla Firefox, Firefox Focus, Firefox Nightly, Tor Browser</td></tr>
+<tr><td><strong>Proxy-based</strong></td><td>Opera Mini (independently reproduced)</td></tr>
+</table>
+
+<table>
+<tr><th>Browser</th><th>Engine</th><th>Confirmed vector(s)</th><th>Notified</th></tr>
+<tr><td>Google Chrome</td><td>Chromium</td><td>STA-001, STA-017 (Tier A), STA-020</td><td>Yes — Google VRP</td></tr>
+<tr><td>Microsoft Edge</td><td>Chromium</td><td>STA-017 (Tier A), STA-020</td><td>Yes — MSRC</td></tr>
+<tr><td>Microsoft Bing</td><td>Chromium (Sapphire)</td><td>STA-013, STA-015-DL</td><td>Yes — MSRC</td></tr>
+<tr><td>Opera Browser</td><td>Chromium</td><td>STA-016, STA-017</td><td>Yes</td></tr>
+<tr><td>DuckDuckGo Browser</td><td>Chromium</td><td>STA-022, STA-022b</td><td>Yes — HackerOne</td></tr>
+<tr><td>Brave Browser</td><td>Chromium</td><td>STA-021, STA-017</td><td>Yes — HackerOne</td></tr>
+<tr><td>Samsung Internet</td><td>Chromium</td><td>STA-023/023b/023c</td><td class="yes">Documented, not formally notified</td></tr>
+<tr><td>Mozilla Firefox</td><td>Gecko</td><td>STA-019a/b/c/d, STA-017</td><td>Yes</td></tr>
+<tr><td>Firefox Focus / Nightly</td><td>Gecko</td><td>STA-019 family</td><td>Yes — via Mozilla</td></tr>
+<tr><td>Tor Browser</td><td>Gecko</td><td>STA-017, STA-019a/b/c</td><td>Yes</td></tr>
+<tr><td>Opera Mini</td><td>Proxy-based</td><td>STA-016</td><td>Yes — via Opera</td></tr>
+</table>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 5. EVIDENCE TAXONOMY                                          -->
+<!-- ============================================================ -->
+<h1 id="taxonomy">5. Evidence Taxonomy</h1>
+<table>
+<tr><th>Tier</th><th>Criteria</th><th>Vectors</th></tr>
+<tr><td><strong>Tier A — Confirmed</strong></td><td>Full stack trace + exception + Bundle analysis</td><td>STA-005/005b/005c/005d, STA-006, STA-007, STA-009, STA-010/010b, STA-011, STA-012/012e, STA-015, STA-015b, STA-015-DL, STA-016, <strong>STA-017 Chrome+Firefox</strong>, STA-018, STA-019a/b/c/d, STA-022</td></tr>
+<tr><td><strong>Tier B — Behavioral</strong></td><td>Crash/ANR observed; mechanism inferred by analogy</td><td>STA-001, STA-003, STA-004, STA-008, STA-013, STA-020, STA-021, STA-022b, STA-023/023b/023c</td></tr>
+<tr><td><strong>Tier C — Mitigated</strong></td><td>Tested; no crash — positive control</td><td>YouTube (all scenarios)</td></tr>
+</table>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 6. STA-017                                                    -->
+<!-- ============================================================ -->
+<h1 id="sta017">6. STA-017 — Cross-Engine ANR: Tier A Evidence</h1>
+
+<div class="ib ib-amb"><p><strong>Evidence (observed):</strong> STA-017 upgraded to Tier A for BOTH Chrome (Chromium) AND Firefox (Gecko). Blocking call: <code>libminikin.so::LineBreakOptimizer::computeBreaks</code>. This is an Android system library — not Chromium or Gecko code.</p></div>
+
+<h2>6.1 Chrome — Full Native Stack Trace (bugreport 2026-05-24)</h2>
+<p><strong>Listing 1.</strong> Native main-thread stack from production bugreport (Xiaomi Redmi Note 14 5G, Android 16).</p>
+<p>Device: Xiaomi Redmi Note 14 5G · HyperOS 3.0 · Android 16. Chrome versionCode 777818033. Two ANR files, identical stack.</p>
+<pre>
+// ANR 1 — 2026-05-24 13:38:44 — Chrome PID 3533
+// Waited 5000ms for MotionEvent — ChromeTabbedActivity
+
+"main" prio=5 tid=1 Native   ← UI THREAD BLOCKED
+
+native: minikin::getPrevWordBreakForCache     libminikin.so
+native: minikin::LayoutCacheKey::LayoutCacheKey  libminikin.so
+native: minikin::LayoutCache::getOrCreate     libminikin.so
+native: minikin::StyleRun::getLineMetrics     libminikin.so
+native: minikin::MeasuredText::getLineMetrics libminikin.so
+native: minikin::LineBreakOptimizer::computeBreaks  ← O(n²) on long URL
+native: minikin::breakLineOptimal             libminikin.so
+native: android::nComputeLineBreaks           libhwui.so
+
+at android.graphics.text.LineBreaker.nComputeLineBreaksWithHelperIndex (Native)
+at android.text.StaticLayout.generate (StaticLayout.java:970)
+at android.text.StaticLayout$Builder.build (StaticLayout.java:550)
+at android.widget.TextView.makeSingleLayout (TextView.java:11263)
+at android.widget.TextView.onMeasure (TextView.java:11486)
+at android.widget.ListView.onMeasure (ListView.java:1321)
+at org.chromium.chrome.browser.contextmenu.ContextMenuListView.onMeasure
+   ↑ CHROME CONTEXT MENU — long-press on oversized URL link
+at android.view.ViewRootImpl.performTraversals
+at android.app.ActivityThread.main
+</pre>
+
+<h2>6.2 Firefox — Full Native Stack Trace (bugreport 2026-06-12)</h2>
+<p>Process: org.mozilla.firefox (PID 3506). Activity: ExternalAppBrowserActivity. Duration: <strong>16,006 ms</strong>. Trigger: REAL Gmail link (not a controlled test).</p>
+<pre>
+// org.mozilla.firefox PID 3506 — ANR 2026-06-10 19:42:19 — 16,006ms
+
+"main" prio=5 tid=1 Native   ← UI THREAD BLOCKED 16,006ms
+
+native: minikin::LayoutCacheKey::LayoutCacheKey+120  libminikin.so
+native: minikin::LayoutCache::getOrCreate             libminikin.so
+native: minikin::LayoutPieces::getOrCreate            libminikin.so
+native: minikin::StyleRun::getLineMetrics             libminikin.so
+native: minikin::MeasuredText::getLineMetrics         libminikin.so
+native: minikin::LineBreakOptimizer::computeBreaks+1752  ← O(n²)
+native: minikin::breakLineOptimal+476                 libminikin.so
+native: android::nComputeLineBreaks+356               libhwui.so
+
+at android.graphics.text.LineBreaker.nComputeLineBreaksWithHelperIndex (Native)
+at android.text.StaticLayout.generate / Builder.build
+at android.widget.TextView.onMeasure
+at org.mozilla.fenix.customtabs.ExternalAppBrowserActivity URL rendering
+</pre>
+
+<table>
+<tr><th>Attribute</th><th>Chrome (Chromium)</th><th>Firefox (Gecko)</th></tr>
+<tr><td>Native entry</td><td>libminikin::LineBreakOptimizer::computeBreaks</td><td>libminikin::LineBreakOptimizer::computeBreaks</td></tr>
+<tr><td>ANR duration</td><td>5,000ms+ (threshold)</td><td><strong>16,006ms</strong> (3× longer)</td></tr>
+<tr><td>Trigger</td><td>Controlled test</td><td><strong>REAL Gmail email link</strong></td></tr>
+<tr><td>Tier</td><td class="ta">Tier A</td><td class="ta">Tier A</td></tr>
+</table>
+
+<h2>6.3 Additional Entry Points Confirmed (June 2026)</h2>
+<table>
+<tr><th>Bugreport</th><th>App</th><th>Trigger</th><th>minikin function</th><th>Entry point</th></tr>
+<tr><td>2026-05-24</td><td>Chrome</td><td>Long-press on link</td><td>breakLineOptimal</td><td>ContextMenuListView.onMeasure</td></tr>
+<tr><td>2026-06-10</td><td>Firefox</td><td>Real Gmail link</td><td>breakLineOptimal</td><td>ExternalAppBrowserActivity</td></tr>
+<tr><td>2026-06-24</td><td>Edge</td><td>SystemUI crash → omnibox re-layout</td><td>breakLineOptimal</td><td>OmniboxSuggestionsContainer</td></tr>
+<tr><td>2026-06-28</td><td>Google App</td><td>android.intent.action.TRANSLATE</td><td><strong>breakLineGreedy</strong></td><td>DynamicLayout$ChangeWatcher.onTextChanged</td></tr>
+</table>
+
+<div class="ib ib-red">
+<p><strong>Critical:</strong> breakLineGreedy is also vulnerable to blocking on long text. The naive “switch to greedy” fix is incomplete. A hard length threshold before either algorithm runs is required.</p>
+</div>
+
+<h3>Reproduction steps (STA-017 — Chrome context menu)</h3>
+<ol>
+<li>Create an HTML page containing a hyperlink whose <code>href</code> is a syntactically valid URL of approximately 80–120 KB with high density of <code>#</code>, <code>/</code> and <code>%</code> characters.</li>
+<li>Host or open the page in Chrome on Android 13–16.</li>
+<li>Long-press the link until the context menu appears.</li>
+<li>Observe main-thread ANR (typically ≥ 5 000 ms). Capture via <code>adb bugreport</code>; native stack shows <code>libminikin::LineBreakOptimizer::computeBreaks</code>.</li>
+</ol>
+<p>Equivalent behaviour has been observed with real-world Gmail links (Firefox, 16 006 ms) and SystemUI-triggered omnibox re-layout (Edge).</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 6b. STA-027                                                    -->
+<!-- ============================================================ -->
+<h1 id="sta027">6b. STA-027 — Edge Ask Copilot Deep Link Amplification <span class="nb">★NEW</span></h1>
+
+<table class="kv">
+<tr><td>STA Identifier</td><td>STA-027</td></tr>
+<tr><td>Category</td><td>Intent / Compose Navigation Amplification (Class A + Class B)</td></tr>
+<tr><td>Affected Component</td><td>Microsoft Edge Ask Copilot (com.microsoft.copilotn)</td></tr>
+<tr><td>Impact</td><td>Crash / navigation failure via deep link with oversized initialText</td></tr>
+<tr><td>CVSS 3.1</td><td>6.5</td></tr>
+<tr><td>Persistence</td><td>Yes (until data cleared / conversation state reset)</td></tr>
+<tr><td>Tier</td><td class="ta">A ★NEW</td></tr>
+<tr><td>MSRC Case</td><td>VULN-196348 / Case 122975</td></tr>
+</table>
+
+<p>STA-027 demonstrates simultaneous Class A and Class B behaviour inside Microsoft Edge’s Ask Copilot deep-link navigation path. An oversized structured payload supplied in the <code>initialText</code> query parameter is accepted by the deep-link handler and forwarded into Jetpack Compose Navigation. The resulting route string exceeds the expected structure of the NavGraph, producing an uncaught <code>IllegalArgumentException</code>.</p>
+
+<pre>
+java.lang.IllegalArgumentException: 
+navigation destination com.microsoft.copilotn.features.deeplink.navigation.routes.HomeNavRoute.ChatNavRoute?
+conversation_id=null&amp;private_mode_chat=false&amp;conversationTitle=null&amp;initialText=ULTRA%20DESTRUCTIVE%20LAYOUT%20ATTACK...
+is not a direct child of this NavGraph
+at androidx.navigation.compose.c.a (NavGraph.kt:356)
+at com.microsoft.copilotn.features.deeplink.navigation.routes.HomeNavRoute.ChatNavRoute
+</pre>
+
+<p>The oversized <code>initialText</code> value simultaneously:</p>
+<ul>
+<li>Triggers expensive text layout / measurement work (Class B amplification path) when the destination attempts to render or pre-process the parameter.</li>
+<li>Breaks Compose Navigation graph resolution because the fully-expanded route is no longer recognised as a direct child of the NavGraph (Class A style state / routing failure).</li>
+</ul>
+
+<div class="ib ib-red">
+<p><strong>Remote activation:</strong> Unlike STA-017 (which requires a long-press or local UI interaction inside an already-open browser), STA-027 can be triggered remotely by a malicious deep link that opens Edge Ask Copilot with a crafted <code>initialText</code> parameter. No prior interaction with the Copilot UI is required beyond following the link.</p>
+</div>
+
+<h3>Reproduction steps (STA-027)</h3>
+<ol>
+<li>Construct a deep link targeting Microsoft Edge Ask Copilot that includes an oversized <code>initialText</code> query parameter (structured text large enough to expand the Compose navigation route beyond NavGraph expectations).</li>
+<li>Open the link from another app or browser (ACTION_VIEW / deep link).</li>
+<li>Observe uncaught <code>IllegalArgumentException</code> from <code>androidx.navigation.compose</code> (NavGraph.kt) when resolving <code>HomeNavRoute.ChatNavRoute</code>.</li>
+<li>Capture logcat / bugreport; confirm stack includes the navigation destination containing the expanded <code>initialText</code>.</li>
+</ol>
+
+<h3>Field evidence: Edge omnibox ANR captured spontaneously (bugreport 4 Aug 2026) <span class="nb">★NEW</span></h3>
+<div class="ib ib-grn">
+<p><strong>This is a third independent reproduction of the STA-017/STA-027 mechanism in Microsoft Edge, captured spontaneously on a production device during the researcher’s ongoing testing — not synthetically triggered for this specific capture.</strong> Unlike the July 2026 field evidence discussed in Section 8.4 (where the Edge ANR followed a SystemUI crash), this capture shows the mechanism in isolation, without a prior system-level event, strengthening the case that <code>libminikin.so</code> resource exhaustion alone — independent of any SystemUI interaction — is sufficient to reproduce the ANR.</p>
+</div>
+<table class="kv">
+<tr><td>Bugreport</td><td>bugreport-2026-08-04-215700.zip, ANR file <code>anr_2026-08-03_18-23-26-102</code></td></tr>
+<tr><td>Timestamp</td><td>2026-08-03 18:23:26 (local)</td></tr>
+<tr><td>Process</td><td><code>com.microsoft.emmx</code> (Microsoft Edge), PID 27527</td></tr>
+<tr><td>ANR Subject</td><td><code>Input dispatching timed out (com.microsoft.emmx/org.chromium.chrome.browser.ChromeTabbedActivity is not responding. Waited 5001ms for MotionEvent(action=DOWN))</code></td></tr>
+<tr><td>Device</td><td>Xiaomi Redmi Note 14 5G (citrine_eea_global), HyperOS 3.0.301.0, Android 16, build BP2A.250605.031.A3</td></tr>
+<tr><td>libminikin.so BuildId</td><td><code>4fabe53671b5ead88314c00a1fd6d67d</code> — identical to the BuildId documented throughout this paper (Sections 3, 8.4)</td></tr>
+<tr><td>System state at capture</td><td>Memory pressure (PSI) avg10=6.70%, CPU pressure avg10=15.87% — nominal load, no OOM or thrashing. No SystemUI crash in the CriticalEventLog preceding this ANR.</td></tr>
+</table>
+
+<p>Full main-thread stack, native frames through Java frames, verbatim from the bugreport:</p>
+<pre>native: #00 pc 0011853c  libminikin.so (minikin::getNextWordBreakForCache +236) (BuildId: 4fabe53671b5ead88314c00a1fd6d67d)
+native: #01 pc 00125844  libminikin.so (minikin::StyleRun::getLineMetrics const+644) (BuildId: 4fabe53671b5ead88314c00a1fd6d67d)
+native: #02 pc 00126cac  libminikin.so (minikin::MeasuredText::getLineMetrics const+332) (BuildId: 4fabe53671b5ead88314c00a1fd6d67d)
+native: #03 pc 0012eb98  libminikin.so (minikin::LineBreakOptimizer::computeBreaks +1752) (BuildId: 4fabe53671b5ead88314c00a1fd6d67d)
+native: #04 pc 0012d3fc  libminikin.so (minikin::breakLineOptimal +476) (BuildId: 4fabe53671b5ead88314c00a1fd6d67d)
+native: #05 pc 0087d444  libhwui.so (android::nComputeLineBreaks +356)
+  at android.graphics.text.LineBreaker.nComputeLineBreaksWithHelperIndex(Native method)
+  at android.graphics.text.LineBreaker.computeLineBreaks(LineBreaker.java:634)
+  at android.text.StaticLayout.generate(StaticLayout.java:969)
+  at android.text.StaticLayout.&lt;init&gt;(StaticLayout.java:736)
+  at android.text.StaticLayout$Builder.build(StaticLayout.java:550)
+  at android.widget.TextView.makeSingleLayout(TextView.java:11263)
+  at android.widget.TextView.makeNewLayout(TextView.java:11039)
+  at android.widget.TextView.checkForRelayout(TextView.java:11781)
+  at android.widget.TextView.setText(TextView.java:7557)
+  [... Edge-internal obfuscated adapter/binder frames ...]
+  at androidx.recyclerview.widget.RecyclerView.onMeasure
+  at org.chromium.chrome.browser.omnibox.suggestions.OmniboxSuggestionsContainer.onMeasure
+  at android.view.ViewRootImpl.performTraversals(ViewRootImpl.java:4891)
+  at android.view.Choreographer$CallbackRecord.run(Choreographer.java:2088)</pre>
+
+<p><strong>Causal chain, confirmed layer by layer:</strong> a <code>RecyclerView</code>-backed omnibox suggestion adapter binds an oversized structured payload to a <code>TextView</code> → <code>TextView.setText()</code> triggers <code>StaticLayout</code> construction → <code>StaticLayout</code> delegates line-break computation to <code>libhwui.so</code> → <code>libhwui.so</code> calls into <code>libminikin.so</code>’s <code>LineBreakOptimizer::computeBreaks</code> (the O(n²) optimal algorithm) with no length threshold → the main thread blocks for 5,001ms+ → Android’s input dispatcher times out and raises the ANR. Two active network threads to <code>copilot.microsoft.com</code> (HTTP/2 and WebSocket) were confirmed idle — waiting on socket reads, not blocking — ruling out network I/O as a contributing factor. This isolates the cause entirely to the text-layout computation path already documented in Section 3.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 7. AOSP COMMIT EVIDENCE                                       -->
+<!-- ============================================================ -->
+<h1 id="aosp">7. AOSP Commit Evidence</h1>
+
+<h2>7.1 Chromium Commit 3e62ece6 — LargePayloadSupport (May 7, 2026)</h2>
+<div class="ib ib-red">
+<p><strong>Commit:</strong> <a href="https://chromium.googlesource.com/chromium/src/+/3e62ece6" target="_blank" rel="noopener">chromium.googlesource.com/chromium/src/+/3e62ece6</a></p>
+<p><strong>Commit message (verbatim):</strong></p>
+<p><em>“Implements ResultReceiver for large payloads in DigitalCredentialsPresentationDelegate to avoid TransactionTooLargeException when responses exceed Binder IPC limits. This aligns with updates in Jetpack libraries (AOSP CL 3989977) where large payloads are passed via file descriptors.”</em></p>
+<p>1. Explicitly names TransactionTooLargeException — same as ALL Class A vectors.<br>
+2. References AOSP CL 3989977 (LargePayloadSupport) — internal, not public.<br>
+3. Fix: file descriptors instead of Binder.<br>
+4. Google named this: <strong>LargePayloadSupport</strong>.</p>
+</div>
+
+<p>Related historical trackers:</p>
+<ul>
+<li>Google Issue Tracker 40879254 (2022): <a href="https://issuetracker.google.com/issues/40879254" target="_blank" rel="noopener">issuetracker.google.com/issues/40879254</a></li>
+<li>Google Issue Tracker 40268979 (Samsung 2023): <a href="https://issuetracker.google.com/issues/40268979" target="_blank" rel="noopener">issuetracker.google.com/issues/40268979</a></li>
+<li>AOSP minikin repository: <a href="https://android.googlesource.com/platform/frameworks/minikin/" target="_blank" rel="noopener">android.googlesource.com/platform/frameworks/minikin/</a></li>
+</ul>
+
+<h2>7.2 androidx.savedstate 1.5.0 — Bug #425919375</h2>
+<table>
+<tr><th>Date</th><th>Event</th><th>T+ VRP</th></tr>
+<tr><td>Jun 19, 2025</td><td>Bug #425919375 created — SavedState serialization</td><td>— (inactive 7 months)</td></tr>
+<tr><td>Jan 20, 2026</td><td><strong>VRP submission to Google Android VRP</strong></td><td>T+0</td></tr>
+<tr><td>Feb 10, 2026</td><td>Google responds for FIRST time</td><td>T+21 days</td></tr>
+<tr><td>Mar 4, 2026</td><td>Commit: Support generic serialization for SavedState</td><td>T+43 days</td></tr>
+<tr><td>Mar 11, 2026</td><td>Bug Fixed — savedstate 1.5.0-alpha01</td><td>T+50 days</td></tr>
+<tr><td>May 19, 2026</td><td>savedstate 1.5.0 STABLE — CBOR/JSON decoupled from Binder</td><td>T+119 days</td></tr>
+</table>
+
+<div class="ib ib-amb"><p>savedstate 1.5.0 decouples SavedState from the Bundle/Binder pipeline — an architectural fix for part of the Class A root cause. Bug inactive 7 months. Reactivated 21 days after VRP. Fixed in ~30 days. Google framed it as “multiplatform support” — no security motivation mentioned publicly.</p></div>
+
+<h2>7.3 libminikin design debt — multi-file pipeline (AOSP forensic summary)</h2>
+<p>Independent AOSP source review identifies a <strong>systemic design gap</strong> across multiple minikin files: no length validation before expensive line-breaking or layout work. Oldest relevant code paths date to <strong>2013</strong>. Key files:</p>
+<table>
+<tr><th>File</th><th>Since</th><th>Issue</th><th>Function</th></tr>
+<tr><td>FontFamily.cpp</td><td>2013</td><td>Null / closest-match edge cases</td><td>getClosestMatch()</td></tr>
+<tr><td>Layout.cpp</td><td>2013</td><td>Long text processed without cache guard</td><td>doLayoutWord()</td></tr>
+<tr><td>OptimalLineBreaker.cpp</td><td>2015</td><td>Knuth-Plass O(n²) without input limit</td><td>computeBreaks()</td></tr>
+<tr><td>GreedyLineBreaker.cpp</td><td>2017</td><td>Nested loops; worst-case costly</td><td>processLineBreak()</td></tr>
+<tr><td>LineBreaker.cpp</td><td>2018</td><td>Chooses Optimal/Greedy with no size check</td><td>breakIntoLines()</td></tr>
+<tr><td>LayoutCache.h</td><td>2018</td><td>Over CHAR_LIMIT_FOR_CACHE → direct process (no cache)</td><td>getOrCreate()</td></tr>
+</table>
+<pre>
+LineBreaker::breakIntoLines()     — no textBuffer.size() guard
+        ↓
+Optimal / Greedy breaker          — O(n²) / nested work on long input
+        ↓
+Layout::doLayoutWord()
+        ↓
+LayoutCache::getOrCreate()        — long ranges bypass cache → full work
+        ↓
+HarfBuzz shaping
+        ↓
+UI thread blocked (5–16 s ANR)
+</pre>
+<p>Public Issue Tracker history (examples): #161830416, #167014931, #188985643, #40268980 / Chromium 1447465 (Samsung engineer ANR), #477202817 (Won’t Fix), #524288518 (out of scope), #526330835 (appeal, closed "Not Reproducible" — 21 Jul 2026), #531319203 (related pattern). Structural length limits were not applied across the pipeline as of the July 2026 bulletin, despite the existence of internal Google work addressing an adjacent root cause (AOSP CL 3989977, LargePayloadSupport).</p>
+<p>Detail: <a href="https://lostmon.blogspot.com/2026/07/libminikin-10-anos-de-vulnerabilidad-en_0671440346.html" target="_blank" rel="noopener">libminikin: 10 años de vulnerabilidad</a> · <a href="https://lostmon.blogspot.com/2026/06/algorithmic-dos-en-libminikinso.html" target="_blank" rel="noopener">Algorithmic DoS en libminikin.so</a></p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 8. FIELD EVIDENCE                                             -->
+<!-- ============================================================ -->
+<h1 id="convergence">7.4 Post-Disclosure Architectural Convergence (AndroidX, August 2026)</h1>
+<div class="ib ib-gry">
+<p><strong>Scope note.</strong> The commit discussed below is not claimed to fix any STA vector documented in this paper. It is presented solely as independent public evidence that Google engineers are actively mitigating a related architectural failure class — oversized structured state crossing Binder-backed SavedState boundaries — while the specific STA root causes in <code>libminikin.so</code> and <code>FragmentManager.restoreAllState()</code> remain publicly unpatched as of this disclosure.</p>
+</div>
+
+<h2>7.4.1 AndroidX commit: "Fix transaction too large crashes" (PdfView)</h2>
+<p>Commit: <a href="https://android.googlesource.com/platform/frameworks/support/+/8882927e7d41e678c6f03f50d4bd5950e7dc6c47" target="_blank" rel="noopener">android.googlesource.com/platform/frameworks/support/+/8882927e7d41e678c6f03f50d4bd5950e7dc6c47</a></p>
+<p>The commit message states, verbatim:</p>
+<pre>Fix transaction too large crashes
+
+When a user selects content across a large range of pages (e.g., 500 pages),
+the serialized SelectionModel exceeds 1.2 MB. Serializing this into
+onSaveInstanceState triggers an unhandled TransactionTooLargeException over
+the kernel Binder IPC driver right when the app goes into the background.
+
+This change fixes the crash and improves selection lifecycle handling:
+- Distinguishes in-memory screen rotation (Activity.isChangingConfigurations)
+  from process backgrounding in PdfView.onSaveInstanceState(). During
+  rotation, the full selection is preserved in memory for instant
+  restoration without flicker.
+- When backgrounding across Binder IPC, only lightweight start and end
+  boundary anchor points [are serialized, rather than the full selection].</pre>
+<p>This fix is scoped to <code>androidx.pdf.viewer.PdfView</code> — a specific AndroidX Jetpack component for PDF rendering and text selection — not to <code>FragmentManager</code> or any general-purpose SavedState path. The mitigation strategy is nonetheless directly relevant: rather than validating or truncating the oversized payload, the fix <strong>avoids serializing the full object across the Binder boundary at all</strong>, replacing it with lightweight boundary markers and reconstructing full state asynchronously post-restart. This is architecturally distinct from — but consistent with — the safe-fallback approach proposed in Section 19 of this paper for <code>FragmentManager.restoreAllState()</code>.</p>
+
+<h2>7.4.2 Binder transaction size heuristic remains a first-order constraint</h2>
+<p>Android's Binder implementation continues to enforce a payload-size heuristic ahead of the hard 1MB transaction ceiling. Relevant source: <a href="https://android.googlesource.com/platform/frameworks/base/+/6890be92181922ef75736ed3da72cd3979902159/core/jni/android_util_Binder.cpp" target="_blank" rel="noopener">android_util_Binder.cpp</a>, which historically has included a warning/limit threshold in the 200KB range ahead of the 1MB hard failure — illustrating that Binder payload size remains an actively monitored reliability constraint at the platform level, independent of this paper’s findings.</p>
+
+<h2>7.4.3 What this convergence does and does not establish</h2>
+<table class="kv">
+<tr><td>Confirmed fixed by this commit</td><td><code>androidx.pdf.viewer.PdfView</code> text-selection state crossing Binder during backgrounding</td></tr>
+<tr><td><strong>Not</strong> fixed by this commit</td><td><code>libminikin.so</code> (<code>LineBreakOptimizer</code>, <code>breakLineOptimal()</code>, <code>breakLineGreedy()</code>) — no public commit as of this disclosure (Section 7.3)</td></tr>
+<tr><td><strong>Not</strong> fixed by this commit</td><td><code>FragmentManager.restoreAllState()</code> — no public safe-fallback as of <code>androidx.fragment</code> 1.9.0-rc01 (29 Jul 2026)</td></tr>
+</table>
+<p>The PdfView fix demonstrates that Google engineers, independently of this research, identified and mitigated one instance of the same general architectural pattern this paper calls Structured Text Amplification Class A: <em>oversized structured object &rarr; SavedState serialization &rarr; Binder IPC &rarr; TransactionTooLargeException &rarr; crash</em>. This is offered as circumstantial support for treating STA as a systemic reliability pattern recurring across independent AndroidX components, rather than as a claim that any STA vector in this paper has been patched.</p>
+
+<h2>7.4.4 AOSP commit: boot-loop fix in DevicePolicyManagerService (October 2026) <span class="nb">★NEW</span></h2>
+<p>Commit: <code>frameworks/base/+/f4e7001b21fb26b57d06c7e487de95fd6c63fe6e</code> (fixes <strong>CVE-2026-58834</strong>, Bug 515158597, October 2026 Android Security Bulletin).</p>
+<div class="ib ib-amb">
+<p><strong>Scope note, as with the PdfView commit above: this is a different subsystem (device policy / BYOD work-profile management, not Binder-backed SavedState, not libminikin) and is not claimed as a fix for any STA vector in this paper.</strong> It is presented because the failure pattern and the fix architecture are a near-exact structural match for the Class A root-cause model this paper describes, independently arrived at by a different Google engineering team for a different subsystem.</p>
+</div>
+<p>The commit message states, verbatim:</p>
+<pre>Fix boot-loop vulnerability in setPermissionGrantState
+
+A malicious BYOD work-profile DPC could persistently boot-loop the device by
+passing an out-of-range grantState to setPermissionGrantState(). This
+unvalidated value was saved to disk and threw an uncaught
+IllegalArgumentException during subsequent system_server boots, requiring
+a factory reset.
+
+This commit fixes the issue by:
+1. Adding a Preconditions.checkArgument in DevicePolicyManagerService to
+   validate the grantState when the coexistence flag is enabled, preventing
+   invalid states from being stored.
+2. Wrapping policy re-application calls in DevicePolicyEngine with try-catch
+   blocks to ensure that any invalid saved policy state logs a non-fatal
+   error instead of crashing the system_server during boot.</pre>
+<table>
+<tr><th>Element</th><th>STA Class A (this paper)</th><th>CVE-2026-58834 (DevicePolicyEngine)</th></tr>
+<tr><td>Unvalidated input</td><td>Oversized structured text payload</td><td>Out-of-range <code>grantState</code> integer</td></tr>
+<tr><td>Persistence</td><td>Written to disk (SavedState) before the crash</td><td>Written to disk before the crash</td></tr>
+<tr><td>Uncaught exception</td><td><code>TransactionTooLargeException</code></td><td><code>IllegalArgumentException</code></td></tr>
+<tr><td>Resulting loop</td><td>Permanent app crash loop</td><td>Permanent <strong>boot loop</strong> (system_server)</td></tr>
+<tr><td>Recovery</td><td>Clear app data</td><td><strong>Factory reset</strong> — more severe</td></tr>
+<tr><td>Fix pattern applied</td><td><em>(proposed in this paper, Section 16)</em></td><td>Validate before persisting + wrap restoration in try-catch with non-fatal logging</td></tr>
+</table>
+<p>This is the closest architectural match yet found between an independent Google commit and the exact "no safe fallback on restoring persisted state" root-cause argument made throughout this paper — not because the affected code is related to <code>FragmentManager</code> or <code>libminikin</code> (it is not), but because the fix Google chose to apply, for a different subsystem, is precisely the two-part remedy this paper recommends for STA Class A: validate before writing to disk, and never let a corrupt persisted value crash the restoring process uncaught.</p>
+
+<h1 id="field">8. Field Evidence — Android 16, Production Device</h1>
+
+<h2>8.1 STA-015 — 85 SystemUI Crashes in 4 Days (bugreport 2026-05-26)</h2>
+<p>Device: Xiaomi Redmi Note 14 5G · HyperOS 3.0.3.0 · Android 16. Crash loop reproduced spontaneously during normal device use.</p>
+<pre>
+// SystemUI crash at bootstrap
+android.os.BadParcelableException: Failure retrieving array; only received 1 of 4
+  at android.content.pm.BaseParceledListSlice.&lt;init&gt;(BaseParceledListSlice.java:111)
+  at android.window.ITaskOrganizerController$Stub$Proxy.registerTaskOrganizer(...)
+  at android.window.TaskOrganizer.registerOrganizer(TaskOrganizer.java:76)
+  at com.android.wm.shell.sysui.ShellInit.init(...)  ← crash at bootstrap
+Caused by: android.os.DeadObjectException: Transaction failed on small parcel
+</pre>
+<table class="kv">
+<tr><td>Total SystemUI crashes</td><td>85 entries — 4 days (May 23–26, 2026)</td></tr>
+<tr><td>Fastest loop</td><td>16 crashes in 92 seconds</td></tr>
+<tr><td>Min survival time</td><td>374 ms — crashes before any UI renders</td></tr>
+<tr><td>Android version</td><td>Android 16 — first confirmed reproduction</td></tr>
+</table>
+
+<h2>8.2 STA-015b / STA-015-DL — HyperOS Auto-Re-Trigger (12-step flow)</h2>
+<pre>
+STEP 1:  User opens HTML from Google Drive, clicks link
+STEP 2:  Browser receives malformed URL via VIEW Intent
+         callingPackage=com.google.android.apps.docs (certified by Android OS)
+STEP 3:  libminikin O(n²) ANR in browser
+STEP 4:  URL corrupts TaskPersister state on disk
+STEP 5:  SystemUI reads corrupt state → BadParcelableException → CRASH
+STEP 6:  Android auto-restarts SystemUI
+STEP 7:  OEM Task State Interactor (HyperOS OEM) subscribes Flow:
+         getFocusedRootTaskInfo() → reads SAME corrupt disk state → CRASH AGAIN
+STEP 8:  Crash loop → Android forced to clear SystemUI data → LOCKSCREEN
+STEP 9:  User enters PIN/pattern/fingerprint
+STEP 10: Android restores session → BROWSER RETURNS TO FOREGROUND
+STEP 11: OEM Task State Interactor reads task state → browser is active
+         → reads still-corrupt TaskPersister state → SECOND CRASH LOOP
+STEP 12: NO ADDITIONAL USER ACTION REQUIRED — crash re-triggers automatically
+
+// Recovery: force reboot + clear browser data
+</pre>
+
+<div class="ib ib-red">
+<p><strong>STA-015-DL on HyperOS re-triggers AUTOMATICALLY after lockscreen unlock.</strong> No additional user action is required after the initial click. A single reboot may not be sufficient if the browser relaunches with the same corrupt state.</p>
+</div>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 9. COMPLETE VECTOR CATALOG                                    -->
+<!-- ============================================================ -->
+<h1 id="catalog">9. Complete Vector Catalog — 33 Vectors</h1>
+
+<p><strong>Table 2.</strong> Documented STA vectors. CVSS scores are researcher estimates (see methodology note under the table). Tier A = full stack / exception evidence; Tier B = behavioural / analogy.</p>
+<table>
+<tr><th>ID</th><th>App / Component</th><th>CVSS</th><th>Persist</th><th>Tier</th></tr>
+<tr><td class="id">STA-015-DL</td><td>Google Drive + Any Browser → SystemUI crash loop (hard reboot)</td><td class="cvss8">8.6</td><td class="yes">Reboot only</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-018</td><td>Google Drive + Print Service + SystemUI — ANR cascade</td><td class="cvss7">7.5</td><td class="yes">Until reboot</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-010</td><td>SystemUI / Print Service — Drive → local printer</td><td class="cvss7">7.2</td><td class="yes">Until reboot</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-011</td><td>SystemUI / Clipboard — paste preview crash</td><td class="cvss7">7.2</td><td class="yes">Until reboot</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-015</td><td>WindowManager Shell / RecentTasksController</td><td class="cvss7">7.2</td><td class="auto">Auto-restart→lockscreen</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-015b</td><td>HyperOS / OEM Task State Interactor (Xiaomi OEM)</td><td class="cvss7">7.2</td><td class="auto">Auto-recovery</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-012</td><td>Threads (Meta) — deep link /search?q=[payload]</td><td class="cvss7">7.1</td><td class="yes">Permanent (pm clear)</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-012e</td><td>Threads via WhatsApp — HTML/WebView → Threads deep link</td><td class="cvss7">7.1</td><td class="yes">Permanent (pm clear)</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-019a</td><td>Firefox — ClipboardManager DeadSystemException on address bar focus</td><td class="cvss6">6.8</td><td class="yes">Every focus event</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-008</td><td>System services — sync IPC call + oversized payload → ANR</td><td class="cvss6">6.8</td><td class="yes">Until app killed</td><td class="tb">B</td></tr>
+<tr><td class="id">STA-005d</td><td>WhatsApp deep link api.whatsapp.com/send?text=[payload]</td><td class="cvss6">6.8</td><td class="auto">Possible</td><td class="tb">B</td></tr>
+<tr><td class="id">STA-017</td><td>6+ browsers — long-press URL → libminikin ANR (Chrome+Firefox Tier A)</td><td class="cvss6">6.5</td><td class="no">No</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-027</td><td>Microsoft Edge Ask Copilot — deep link initialText NavGraph crash <span class="nb">★NEW</span></td><td class="cvss6">6.5</td><td class="yes">Yes</td><td class="ta">A ★</td></tr>
+<tr><td class="id">STA-005</td><td>WhatsApp — paste large text in chat compose field</td><td class="cvss6">6.5</td><td class="yes">Permanent (delete chat)</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-005b</td><td>WhatsApp Business — all agents in shared inbox</td><td class="cvss6">6.5</td><td class="yes">Permanent (all agents)</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-005c</td><td>WhatsApp + Meta AI — oversized draft in AI chat</td><td class="cvss6">6.5</td><td class="yes">Permanent (entire app)</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-006</td><td>Google App — Select text → Translate</td><td class="cvss6">6.5</td><td class="yes">Permanent</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-007</td><td>Google Drive — invisible PDF → Select All → Translate</td><td class="cvss6">6.5</td><td class="yes">Permanent</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-009</td><td>Google Drive — large DOCX → Print Preview</td><td class="cvss6">6.5</td><td class="yes">Permanent</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-010b</td><td>Google Play Services — Drive → cloud printer</td><td class="cvss6">6.5</td><td class="yes">Until app closed</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-016</td><td>Opera Browser — onResume → RuntimeException: Failure from system</td><td class="cvss6">6.5</td><td class="yes">Permanent</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-019d</td><td>Firefox — address bar TextLayout lineIndex OOB</td><td class="cvss6">6.5</td><td class="yes">Every focus event</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-020</td><td>Chrome + Edge — address bar history pipeline ANR</td><td class="cvss6">6.5</td><td class="yes">Until history cleared</td><td class="tb">B</td></tr>
+<tr><td class="id">STA-021</td><td>Brave Browser — address bar ANR / rendering anomaly</td><td class="cvss6">6.5</td><td class="yes">Until history cleared</td><td class="tb">B</td></tr>
+<tr><td class="id">STA-022</td><td>DuckDuckGo — URL_EXTRA_ARG 920KB in Fragment args (965KB parcel)</td><td class="cvss6">6.5</td><td class="yes">Until tab closed</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-022b</td><td>DuckDuckGo — history suggestion pipeline ANR (cross-session)</td><td class="cvss6">6.5</td><td class="yes">Until history cleared</td><td class="tb">B</td></tr>
+<tr><td class="id">STA-013</td><td>Microsoft Bing — contaminated address bar history crash</td><td class="cvss6">6.0</td><td class="yes">Until data cleared</td><td class="tb">B</td></tr>
+<tr><td class="id">STA-019b</td><td>Firefox — SearchDialogFragment IllegalStateException</td><td class="cvss6">6.0</td><td class="yes">Every focus event</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-019c</td><td>Firefox — Compose TextLayout lineIndex OOB (Jetpack Compose)</td><td class="cvss6">6.0</td><td class="yes">Every focus event</td><td class="ta">A</td></tr>
+<tr><td class="id">STA-023/b/c</td><td>Samsung Internet — background tab / Share / tab group freeze</td><td class="cvss5">5.4</td><td class="no">No</td><td class="tb">B</td></tr>
+<tr><td class="id">STA-004</td><td>Google Maps — oversized geo: URI</td><td class="cvss5">4.8</td><td class="auto">Partial</td><td class="tb">B</td></tr>
+<tr><td class="id">STA-001/003</td><td>Chrome / Browsers — long-press context menu, Share link</td><td class="cvss3">3.7</td><td class="no">No</td><td class="ta">A ★</td></tr>
+<tr><td class="id">STA-031</td><td>Google Docs — libminikin text-shaping/measurement path (HarfBuzz, sixth entry point)</td><td class="cvss6">6.5</td><td class="no">No</td><td class="ta">A ★NEW</td></tr>
+</table>
+
+<p class="small" style="font-size:11px;color:#666;"><em>CVSS methodology note:</em> CVSS 3.1 scores are researcher estimates. For STA-015-DL the vector used is AV:N/AC:L/PR:N/UI:R/S:C/C:N/I:N/A:H (8.6). Other scores follow analogous reasoning (remote or local delivery, user interaction, availability impact, and whether scope changes to SystemUI). Scores are subject to vendor revision.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 9b. IMPACT MATRIX                                             -->
+<!-- ============================================================ -->
+<h1 id="impact-matrix">9b. Impact Matrix (Qualitative)</h1>
+
+<p><strong>Table 3.</strong> Qualitative impact summary by vector group (researcher assessment; complements CVSS in Table 2).</p>
+<table>
+<tr><th>Vector group</th><th>Availability</th><th>Persistence</th><th>User interaction</th><th>Attack complexity</th><th>Notes</th></tr>
+<tr><td>STA-015-DL / SystemUI</td><td>High (device UI)</td><td>Yes (reboot)</td><td>One click</td><td>Low</td><td>Scope Changed; hard reboot</td></tr>
+<tr><td>STA-010/011 Print/Clipboard</td><td>High (SystemUI)</td><td>Yes (until reboot)</td><td>Print / paste</td><td>Low</td><td>System service path</td></tr>
+<tr><td>STA-005 WhatsApp family</td><td>High (app / shared inbox)</td><td>Yes (delete chat)</td><td>Paste / open chat</td><td>Low</td><td>×20.6 Bundle amplification</td></tr>
+<tr><td>STA-012 Threads</td><td>High (app)</td><td>Yes (pm clear)</td><td>Deep link click</td><td>Low</td><td>Permanent until data clear</td></tr>
+<tr><td>STA-017 libminikin ANR</td><td>Medium (ANR 5–16 s)</td><td>No</td><td>Long-press / focus</td><td>Low</td><td>Cross-engine; framework lib</td></tr>
+<tr><td>STA-027 Edge Ask Copilot</td><td>Medium–High (crash)</td><td>Yes</td><td>Deep link click</td><td>Low</td><td>Remote; Compose NavGraph</td></tr>
+<tr><td>STA-019 Firefox address bar</td><td>Medium</td><td>Yes (every focus)</td><td>Focus address bar</td><td>Low</td><td>Repeated until history cleared</td></tr>
+<tr><td>STA-020/021/022 browsers</td><td>Medium</td><td>Partial</td><td>Focus / history</td><td>Low</td><td>History pipeline</td></tr>
+</table>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 9c. STA-001/003 DETAIL                                        -->
+<!-- ============================================================ -->
+<h1 id="sta001">9c. STA-001 / STA-003 — Context Menu and Share Intent Serialization <span class="nb">★UPGRADED to Tier A</span></h1>
+<div class="ib ib-grn">
+<p><strong>Originally documented at Tier B (behavioural observation only).</strong> Exception-level evidence recovered from earlier research notes upgrades both STA-001 and STA-003 to Tier A. These are the two earliest-documented vectors in the STA catalogue and share the same root cause as STA-005: an oversized string reaching a Binder-backed IPC boundary without a length check.</p>
+</div>
+
+<h2>STA-001 — Context Menu Preparation (Long-Press)</h2>
+<p>Long-pressing a link whose URL/anchor text has been amplified via nested structured content builds a context menu <code>Bundle</code> that can exceed the Binder limit before the menu is even displayed.</p>
+<pre>data parcel size 2272776 bytes  (217% over the 1,048,576-byte Binder ceiling)
+
+Caused by: android.os.TransactionTooLargeException
+  at android.os.BinderProxy.transactNative(Native Method)
+  at android.os.BinderProxy.transact(BinderProxy.java:642)
+  at android.app.IActivityTaskManager$Stub$Proxy.startActivityForResult(...)
+  at android.app.Instrumentation.execStartActivity(Instrumentation.java:1719)
+  at android.app.Activity.startActivityForResult(Activity.java:5285)
+  at com.opera.android.BrowserActivity.startActivityForResult(...)</pre>
+<p>The call path confirms the failure occurs when the context-menu host activity attempts to launch a follow-on activity carrying the oversized selection/URL payload as an Intent extra — the same <code>startActivityForResult</code> pattern documented independently for STA-016 (Opera, "Failure from system"), reinforcing that this is a shared platform-level IPC ceiling rather than an app-specific bug.</p>
+
+<h2>STA-003 — Share Intent Serialization</h2>
+<p>Selecting <em>Share</em> on the same amplified content serializes the full string into a <code>Intent.EXTRA_TEXT</code> payload, which is then transmitted across the Binder boundary to the target app / share sheet.</p>
+<pre>data parcel size 1662976 bytes  (58.6% over the 1,048,576-byte Binder ceiling)
+
+Caused by: android.os.TransactionTooLargeException: data parcel size 1662976 bytes
+  at android.os.BinderProxy.transactNative(Native Method)
+  at android.os.BinderProxy.transact(BinderProxy.java:642)
+  at android.app.IActivityTaskManager$Stub$Proxy.startActivity(...)
+  at android.app.Instrumentation.execStartActivity(Instrumentation.java:1719)
+  at android.app.Activity.startActivityForResult(Activity.java:5285)
+  at android.app.Activity.startActivity(Activity.java:5642)</pre>
+<p>Vulnerable pattern in the calling application:</p>
+<pre>Intent shareIntent = new Intent(Intent.ACTION_SEND);
+shareIntent.putExtra(Intent.EXTRA_TEXT, fullContent);  // no length check
+startActivity(Intent.createChooser(shareIntent, "Share via"));</pre>
+<p>Both STA-001 and STA-003 confirm the same architectural pattern documented throughout this paper: a structured payload crosses a Binder-backed IPC boundary (context menu launch, or Share Intent dispatch) with no length validation, producing a deterministic <code>TransactionTooLargeException</code> once the 1,048,576-byte ceiling is exceeded. Unlike STA-005 (SavedState / FragmentManager), these two vectors are transient — they do not persist to disk and do not produce a crash loop — which is why their CVSS score (3.7) is materially lower than STA-005 (6.5) despite sharing the same root mechanism.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 10. WHATSAPP                                                  -->
+<!-- ============================================================ -->
+<h1 id="whatsapp">10. STA-005 — WhatsApp Variants</h1>
+
+<table class="kv">
+<tr><td>Affected component</td><td>FragmentManager.restoreAllState() — AndroidX</td></tr>
+<tr><td>Trigger</td><td>Bundle.dataSize() &gt; 1,048,576 bytes during state restoration</td></tr>
+<tr><td>Current behavior</td><td>TransactionTooLargeException uncaught → crash → state re-persisted → loop</td></tr>
+<tr><td>Expected behavior</td><td>Exception caught → state discarded → clean start → no loop</td></tr>
+<tr><td>Reproducibility</td><td>100% — Pixel 7, Xiaomi Redmi 14, OPPO A78 5G, OnePlus 11 (Android 13–16); see full Cross-OEM Validation table in Testing Methodology</td></tr>
+<tr><td>Confirmed apps</td><td>WhatsApp, WhatsApp Business, Meta AI, Threads, Bing, Opera, DuckDuckGo, Firefox</td></tr>
+<tr><td>CVSS 3.1</td><td>6.5 — AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H</td></tr>
+</table>
+
+<h3>Field evidence: TikTok Fragment SavedState overflow (recursive nesting)</h3>
+<div class="ib ib-grn">
+<p>A crash log recovered from earlier research confirms the same <code>FragmentManager.restoreAllState()</code> failure occurring independently in <strong>TikTok</strong>, not only in the Meta apps documented elsewhere in this paper — extending the confirmed-application list beyond WhatsApp/Threads/Bing/Opera/DuckDuckGo/Firefox.</p>
+</div>
+<pre>androidx.lifecycle.BundlableSavedStateRegistry.key: 1,661,088 bytes
+  android:support:fragments:                        1,645,336 bytes
+    childFragmentManager:                            1,636,412 bytes
+      childFragmentManager:                          1,614,072 bytes
+        TIKTOK_FRAGMENT_ARGUMENT:                        5,812 bytes  &lt;- originating payload
+        [... recursive childFragmentManager nesting, 5 levels deep ...]
+
+Caused by: android.os.TransactionTooLargeException: data parcel size 1661088 bytes
+  at android.os.BinderProxy.transactNative(Native Method)
+  at android.app.servertransaction.PendingTransactionActions$StopInfo.run(...)
+  at android.app.ActivityThread$StopInfo.run(...)</pre>
+<p>Amplification breakdown: a <strong>5,812-byte</strong> originating fragment argument reaches <strong>1,661,088 bytes</strong> once propagated through 5 levels of <code>childFragmentManager</code> nesting — a <strong>~286×</strong> amplification factor, each nesting level adding 40–60 bytes of framework metadata plus the full serialized state of every descendant Fragment. This is structurally identical to the WhatsApp ×20.6 amplification already documented in Section 3, confirming the nesting-depth amplification mechanism is a property of <code>FragmentManager</code> itself, not of any single vendor’s Fragment tree design.</p>
+
+<h3>Case study: Meta AI oversized draft (14-step activation sequence)</h3>
+<p>A more granular trigger sequence than the 10-step flow already documented for STA-005c elsewhere in this paper:</p>
+<pre>Step 1:  User opens a chat with Meta AI inside WhatsApp
+Step 2:  User begins composing a long message (or pastes large structured text)
+Step 3:  Text exceeds practical single-message length, spans multiple internal buffers
+Step 4:  WhatsApp's Compose UI retains the full draft in an EditText-backed ViewModel
+Step 5:  User backgrounds the app (switches to another app, or receives a call)
+Step 6:  Android issues onSaveInstanceState() to preserve UI state
+Step 7:  The draft is serialized into the Activity/Fragment SavedState Bundle
+Step 8:  Nested Fragment architecture (chat list -> conversation -> compose bar)
+         multiplies the draft payload at each level (see amplification breakdown above)
+Step 9:  Serialized Bundle exceeds 1,048,576 bytes
+Step 10: TransactionTooLargeException raised, uncaught by FragmentManager
+Step 11: WhatsApp process is killed by the system
+Step 12: The oversized (invalid) SavedState remains written to disk
+Step 13: User reopens WhatsApp; Android attempts to restore the same SavedState
+Step 14: Crash reproduces immediately -> permanent crash loop until app data is cleared</pre>
+
+<p><strong>STA-005b (WhatsApp Business):</strong> When a conversation’s SavedState becomes contaminated, the crash loop affects ALL agents in a shared inbox simultaneously. The only recovery (deleting the conversation) destroys the entire communication history with that client.</p>
+
+<p><strong>STA-005c (WhatsApp + Meta AI):</strong> Oversized draft in AI chat can lock the entire application permanently — see the 14-step activation sequence above for the complete causal chain from compose to crash loop.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 11. SYSTEMUI                                                  -->
+<!-- ============================================================ -->
+<h1 id="systemui">11. STA-015 Series — SystemUI Vectors</h1>
+
+<p>These vectors extend Class A amplification into privileged system components. Impact is no longer confined to a single app.</p>
+
+<table>
+<tr><th>Vector</th><th>Trigger</th><th>Mechanism</th><th>CVSS</th></tr>
+<tr><td class="id">STA-010</td><td>Google Drive document → Print → local printer</td><td>Print Service builds preview Bundle from oversized text; exceeds Binder when handed to SystemUI</td><td>7.2</td></tr>
+<tr><td class="id">STA-010b</td><td>Drive → cloud/network printer</td><td>Same root mechanism routed through Play Services</td><td>6.5</td></tr>
+<tr><td class="id">STA-011</td><td>Copy oversized clipboard → focus text field with assisted-paste</td><td>Clipboard assisted-paste preview serializes full ClipData instead of truncated snippet</td><td>7.2</td></tr>
+<tr><td class="id">STA-015</td><td>Opening recent apps / task list</td><td>RecentTasksController reads corrupt task state → DeadSystemException → SystemUI crash → lockscreen</td><td>7.2</td></tr>
+<tr><td class="id">STA-015b</td><td>HyperOS after SystemUI restart</td><td>OEM Task State Interactor re-reads corrupt state → automatic re-crash</td><td>7.2</td></tr>
+<tr><td class="id">STA-015-DL</td><td>Google Drive HTML link → any browser</td><td>Full remote chain (see section 8.2). Hard reboot required. Scope Changed.</td><td class="cvss8">8.6</td></tr>
+</table>
+
+<div class="ib ib-red">
+<p><strong>CVSS 3.1 for STA-015-DL:</strong> AV:N / AC:L / PR:N / UI:R / S:C / C:N / I:N / A:H = <strong>8.6 HIGH</strong>. Remote, single click, changes scope to SystemUI, high availability impact.</p>
+</div>
+
+<h3>Field evidence: explicit Binder resource exhaustion (Binder error –28), Google Drive → Firefox transition (bugreport 16 Sep 2026) <span class="nb">★NEW</span></h3>
+<div class="ib ib-grn">
+<p><strong>This capture adds a Binder-level error code not previously documented in this paper: explicit error –28 ("No space left on device"), Linux's <code>ENOSPC</code>, reported directly by the Binder driver during an <code>IActivityTaskManager</code> transaction — not merely an application-level <code>DeadObjectException</code> inferred from a dead remote process.</strong> This is stronger evidence of genuine Binder buffer/resource exhaustion than the exception-only evidence in the May and June 2026 captures for this same device.</p>
+</div>
+<table class="kv">
+<tr><td>Device</td><td>Xiaomi Redmi Note 14 5G, Android 16, HyperOS 3.0.301.0, build BP2A.250605.031.A3 — same primary field-evidence device as Sections 5 and 8</td></tr>
+<tr><td>Bugreport</td><td>bugreport-2026-09-16-112840.zip</td></tr>
+<tr><td>Focused window</td><td>~11:26–11:28 local time</td></tr>
+<tr><td>Trigger</td><td>Google Drive → Firefox transition; a crafted long STA-pattern URL is captured as <code>capturedLink</code> in Firefox Task 349</td></tr>
+</table>
+<h4>Chronology</h4>
+<table>
+<tr><th>Time</th><th>Observed event</th></tr>
+<tr><td>11:26:34.185</td><td>Google Drive → Firefox transition. Firefox Task 349 appears; TaskInfo contains <code>capturedLink</code> with the long STA-pattern URL.</td></tr>
+<tr><td>11:26:34.879</td><td><code>TaskOrganizerController</code> fails sending <code>onTaskInfoChanged</code> with <code>DeadObjectException</code>; diagnostic explicitly cites possible Binder buffer exhaustion.</td></tr>
+<tr><td>11:26:35.009</td><td>SystemUI <code>wmshell.main</code> crashes with <code>DeadSystemException</code>, ~130ms after the TaskOrganizer failure.</td></tr>
+<tr><td>11:27:18.086</td><td>SystemUI main thread crashes with <code>DeadObjectException</code> calling <code>IActivityTaskManager.getFocusedRootTaskInfo()</code>, via <code>DynamicIslandTopActivityController</code> (the AOSP-level pattern documented for STA-015).</td></tr>
+<tr><td>11:27:20.317 / 11:27:28.878</td><td>RecentsModel and MiuiFreeformModeController independently record Task 349 with the same <code>capturedLink</code> — confirming persistence of the payload across multiple task-state observers.</td></tr>
+<tr><td><strong>11:27:29.094</strong></td><td><strong>Binder reports error –28, "No space left on device" (ENOSPC), on an <code>android.app.IActivityTaskManager</code> transaction, code 25.</strong></td></tr>
+<tr><td>11:27:29.096</td><td>SystemUI <code>SysUiBg</code> crashes with <code>DeadSystemException</code>; <code>system_server</code> logs an <code>IRecentTasks</code> reply of <strong>371,636 bytes</strong>.</td></tr>
+<tr><td>11:27:38.780 / 11:27:47.803 / 11:27:59.628</td><td>Three further SystemUI main-thread <code>DeadObjectException</code> events in <code>getFocusedRootTaskInfo()</code>, the latter two via the same HyperOS <strong>OEM Task State Interactor</strong> component already documented in this section — confirming the STA-015b re-trigger pattern reproduces again, four months after the original May/June captures.</td></tr>
+</table>
+
+<h4>Reconstructed chain</h4>
+<pre>Google Drive InternalProjectorActivity
+  ↓
+Firefox IntentReceiverActivity
+  ↓
+Firefox HomeActivity / Task 349
+  ↓
+capturedLink = long STA-pattern URL
+  ↓
+Android TaskInfo / task cache
+  ↓
+TaskOrganizer / RecentTasks / ActivityTaskManager
+  ↓
+Binder callbacks and replies ≈365–377 KB
+  ↓
+Binder transaction failures
+  ↓
+explicit –28 "No space left on device"
+  ↓
+SystemUI DeadObjectException / DeadSystemException
+  ↓
+SystemUI restarts and repeated failures</pre>
+
+<div class="ib ib-gry">
+<p><strong>What this capture establishes, and what it does not — stated with the same discipline applied throughout this paper:</strong></p>
+<p><strong>Established:</strong> the crafted long URL entered Android task state for Firefox Task 349 and persisted into subsequent task/recent-task observations; large Binder exchanges (≈365–377 KB) occurred while that state was active; Binder explicitly reported resource exhaustion (–28); SystemUI repeatedly failed on <code>ActivityTaskManager</code> Binder calls during the sequence.</p>
+<p><strong>Not established:</strong> the bugreport alone does not prove the STA payload is the <em>sole</em> root cause of every SystemUI crash in the window — the first SystemUI failure precedes the first explicit –28 event, and <code>system_server</code> (PID 2124) remains present throughout the observed logs, so <code>DeadSystemException</code> here reflects a Binder-level failure, not proof that <code>system_server</code> itself crashed. The full 371,636-byte <code>IRecentTasks</code> reply has not yet been mapped field-by-field to the <code>capturedLink</code> content specifically. Transaction codes (4, 25, 32, 7) are reported as observed, not assigned semantic meaning beyond what the Android 16 AIDL surface confirms independently.</p>
+</div>
+<p>The most defensible formulation for this capture, consistent with the framing used for every other field-evidence section in this paper: <strong>field evidence consistent with STA Class A / Binder-resource amplification</strong>, not an unconditional proof of unique causation. Verification targets for follow-up work include mapping the exact AIDL methods behind the observed transaction codes for this Android 16 build, and reproducing the same task transition with a control URL of comparable length but without the STA structure, to isolate the structural contribution from raw payload size.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 12–14. FIREFOX / CHROME / DUCKDUCKGO (condensed but present) -->
+<!-- ============================================================ -->
+<h1 id="firefox">12. STA-019 — Firefox: Four Failure Modes</h1>
+<ul>
+<li><strong>STA-019a</strong> — ClipboardManager DeadSystemException on every address-bar focus (CVSS 6.8)</li>
+<li><strong>STA-019b</strong> — SearchDialogFragment IllegalStateException (CVSS 6.0)</li>
+<li><strong>STA-019c</strong> — Jetpack Compose TextLayout lineIndex out-of-bounds (CVSS 6.0)</li>
+<li><strong>STA-019d</strong> — address-bar TextLayout lineIndex OOB (CVSS 6.5)</li>
+</ul>
+<p>All four can fire on every focus event once history/state is contaminated, producing a persistent unusable address bar.</p>
+
+<h3>Field evidence: Firefox Focus AndroidUI thread blocked in libminikin (bugreport 3 Aug 2026) <span class="nb">★NEW</span></h3>
+<div class="ib ib-grn">
+<p><strong>A fully symbolicated native stack, captured spontaneously in production, confirms Firefox Focus enters the identical libminikin path as Chrome, Edge, and Google App.</strong> Unlike some other captures in this paper, this stack includes complete demangled C++ symbols for every frame, leaving no ambiguity about the code path.</p>
+</div>
+<table class="kv">
+<tr><td>Bugreport</td><td>bugreport-2026-08-04-215700.zip, ANR file <code>anr_2026-08-03_10-12-51-870</code></td></tr>
+<tr><td>Timestamp</td><td>2026-08-03 10:12:52 (local)</td></tr>
+<tr><td>Process</td><td><code>org.mozilla.focus</code> (Firefox Focus), PID 6675</td></tr>
+<tr><td>ANR Subject</td><td><code>Input dispatching timed out (org.mozilla.focus/org.mozilla.focus.activity.MainActivity is not responding. Waited 5000ms for MotionEvent(action=MOVE))</code></td></tr>
+<tr><td>Thread</td><td><code>"AndroidUI"</code> (Gecko’s naming convention for the Android-side UI thread)</td></tr>
+<tr><td>libminikin.so BuildId</td><td><code>4fabe53671b5ead88314c00a1fd6d67d</code> — identical BuildId documented throughout this paper</td></tr>
+</table>
+<pre>#00 minikin::getPrevWordBreakForCache(U16StringPiece const&, unsigned int)+268
+#01 minikin::StyleRun::getLineMetrics(...) const+504
+#02 minikin::MeasuredText::getLineMetrics(...) const+332
+#03 minikin::(anonymous namespace)::LineBreakOptimizer::computeBreaks(...)+1752
+#04 minikin::breakLineOptimal(...)+476
+#05 libhwui.so android::nComputeLineBreaks(...)+356
+#06 art_jni_trampoline
+#07 android.graphics.text.LineBreaker.computeLineBreaks+212
+#08 android.text.StaticLayout.generate+4640
+#09 android.text.StaticLayout.&lt;init&gt;+988
+#10 android.widget.TextView.makeSingleLayout+2172
+#11 android.widget.TextView.makeNewLayout+676
+#12 android.widget.TextView.onMeasure+1712
+#13 androidx.appcompat.widget.AppCompatTextView.onMeasure+236
+   [... View/ViewGroup measure chain ...]
+#21 androidx.appcompat.widget.AlertDialogLayout.onMeasure+176
+   [... FrameLayout/LinearLayout measure chain repeats through nested containers ...]
+#40 com.android.internal.policy.DecorView.onMeasure+748
+#42 android.view.ViewRootImpl.performMeasure+148
+#44 android.view.ViewRootImpl.performTraversals+2704
+#48 android.view.Choreographer.doFrame+5832</pre>
+<p>The trigger path passes through <code>AlertDialogLayout.onMeasure</code> (frame #21) — consistent with an oversized structured payload being measured inside a dialog component, the same general class of UI surface (dialog/preview rendering a long string) implicated in STA-019 and related vectors. This is the fourth distinct application (after Chrome, Edge, and Google App) independently confirmed entering the identical <code>libminikin::breakLineOptimal</code> → O(n²) path with the same system BuildId.</p>
+
+<h1 id="chrome-edge">13. STA-020 / 021 — Chrome / Edge / Brave Address-Bar Pipeline</h1>
+<p>History suggestion pipeline retains oversized URLs. Subsequent focus or suggestion rendering re-enters libminikin or causes ANR. Chromium applied a partial display-only truncation in 2023 that never covered the loading/history path — STA-020 still reproduces through the unpatched path.</p>
+
+<h3>Field evidence: Chrome UrlBar blocked via breakLineGreedy / DynamicLayout (bugreport 3 Aug 2026) <span class="nb">★NEW</span></h3>
+<div class="ib ib-grn">
+<p><strong>A fifth distinct libminikin entry point, confirmed spontaneously: the Chrome address bar (<code>UrlBar</code>) itself, not the suggestion dropdown.</strong> This capture uses <code>breakLineGreedy</code> via <code>GreedyLineBreaker</code> — the same algorithm family documented for Google App in Section 3, but reached through <code>DynamicLayout</code> rather than <code>StaticLayout</code>, and triggered directly by <code>UrlBarApi26.setText()</code> rather than an omnibox suggestion adapter.</p>
+</div>
+<table class="kv">
+<tr><td>Bugreport</td><td>bugreport-2026-08-04-215700.zip, ANR file <code>anr_2026-08-03_22-38-01-781</code></td></tr>
+<tr><td>Timestamp</td><td>2026-08-03 22:38:01 (local)</td></tr>
+<tr><td>Process</td><td><code>com.android.chrome</code>, PID 9719</td></tr>
+<tr><td>ANR Subject</td><td><code>Input dispatching timed out (com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity is not responding. Waited 5001ms for MotionEvent(action=DOWN))</code></td></tr>
+<tr><td>Chrome build</td><td>TrichromeChromeGoogle6432.aab-stable-787118633</td></tr>
+<tr><td>libminikin.so BuildId</td><td><code>4fabe53671b5ead88314c00a1fd6d67d</code></td></tr>
+</table>
+<pre>native: scudo::HybridMutex::tryLock / lock  [heap allocator activity, not the root cause]
+native: scudo::SizeClassAllocator64::pushBlocks / drain / deallocate
+native: libminikin.so std::__1::__tree&lt;...&gt;::destroy  [Layout cache cleanup, x6 recursive frames]
+native: minikin::LayoutPiece::LayoutPiece +6732
+native: minikin::LayoutCache::getOrCreate&lt;minikin::BoundsCompositor&gt; +200
+native: minikin::LayoutPieces::getOrCreate&lt;minikin::BoundsCompositor&gt; const +576
+native: minikin::StyleRun::getBounds const +748
+native: minikin::MeasuredText::getBounds const +348
+native: minikin::GreedyLineBreaker::overhangExceedLineLimit +276
+native: minikin::GreedyLineBreaker::process +1072
+native: minikin::breakLineGreedy +232          &lt;- GREEDY algorithm, not optimal
+native: libhwui.so android::nComputeLineBreaks +356
+  at android.graphics.text.LineBreaker.computeLineBreaks(LineBreaker.java:634)
+  at android.text.StaticLayout.generate(StaticLayout.java:969)
+  at android.text.StaticLayout$Builder.buildPartialStaticLayoutForDynamicLayout(StaticLayout.java:574)
+  at android.text.DynamicLayout.reflow(DynamicLayout.java:765)          &lt;- DynamicLayout, not StaticLayout
+  at android.text.DynamicLayout.generate(DynamicLayout.java:618)
+  at android.text.DynamicLayout$Builder.build(DynamicLayout.java:399)
+  at android.widget.TextView.makeSingleLayout(TextView.java:11175)
+  at android.widget.EditText.setText(EditText.java:196)
+  at org.chromium.chrome.browser.omnibox.UrlBarApi26.setText(...)       &lt;- Chrome address bar itself
+  at org.chromium.ui.modelutil.PropertyModel.k/q(...)
+  at android.view.View.performClick(View.java:8291)
+  at android.app.ActivityThread.main(ActivityThread.java:10090)</pre>
+<p><strong>Why the allocator frames matter:</strong> the leading <code>scudo</code> allocator frames and the six recursive <code>libminikin</code> tree-destroy frames reflect memory being freed from a prior, already-oversized layout cache entry immediately before the new <code>breakLineGreedy</code> computation begins — consistent with repeated re-entry into the same amplification path across the session, not a one-off allocation spike. <strong>Trigger:</strong> <code>UrlBarApi26.setText()</code> is called from a click handler (<code>View.performClick</code>), consistent with the user tapping the address bar or a suggestion that populates it with the oversized structured payload, which <code>DynamicLayout</code> then attempts to reflow via the greedy line-breaking path.</p>
+
+<h3>STA-031 — Field evidence: Google Docs blocked in libminikin text-shaping/measurement path (bugreport 26 Aug 2026) <span class="nb">★NEW — sixth entry point</span></h3>
+<div class="ib ib-grn">
+<p><strong>Assigned vector ID STA-031 (per the public STA repository index).</strong> This is a sixth distinct libminikin entry point, and the first documented outside the line-breaking algorithms (breakLineOptimal / breakLineGreedy). This capture shows the ANR occurring in the <em>text measurement / glyph shaping</em> path — <code>Paint.measureText()</code> → <code>MinikinUtils::measureText</code> → <code>Layout::measureText</code> → <code>Layout::doLayoutRunCached</code> → <code>LayoutCache::getOrCreate&lt;LayoutAppendFunctor&gt;</code> → <code>LayoutPiece::LayoutPiece</code> → HarfBuzz (<code>hb_shape_full</code>) — rather than the line-breaking path used by all five entry points documented earlier in this section. This indicates the resource-exhaustion pattern is not confined to line-breaking; it recurs wherever <code>libminikin</code> must shape or measure an oversized run of text, including glyph-shaping delegated to the bundled HarfBuzz library.</p>
+</div>
+<table class="kv">
+<tr><td>Process</td><td><code>com.google.android.apps.docs.editors.docs</code> (Google Docs)</td></tr>
+<tr><td>Trigger</td><td>User taps an item in a list/popup UI (e.g. a menu or suggestion item) whose text content is the oversized structured payload</td></tr>
+<tr><td>System state at capture</td><td>Memory and CPU pressure both nominal at time of capture — ruling out system-wide resource exhaustion as a contributing cause, consistent with the isolation method used for the Edge/Copilot capture in this paper</td></tr>
+<tr><td>Evidence tier</td><td>Tier A — full native stack, but see scope caveat below</td></tr>
+</table>
+<pre>native: hb_shape_full(...)                                    libharfbuzz_ng.so
+native: minikin::LayoutPiece::LayoutPiece(...)                 libminikin.so
+native: minikin::LayoutCache::getOrCreate&lt;minikin::LayoutAppendFunctor&gt;  libminikin.so
+native: minikin::Layout::doLayoutRunCached(...)                libminikin.so
+native: minikin::Layout::measureText(...)                      libminikin.so
+native: MinikinUtils::measureText(...)                         libhwui.so / framework glue
+  at android.graphics.Paint.measureText(Paint.java)
+  [... application-level list/popup item measurement, click-triggered ...]</pre>
+<p><strong>Scope caveat (carried over from the original analysis of this capture):</strong> this stack confirms <code>libminikin</code>/HarfBuzz text shaping as the blocking computation, and confirms the trigger is a click on a list/popup item. It does <em>not</em> independently establish that the exact text being measured is the STA payload verbatim (the payload is inferred from the reproduction context, not read back out of the native frames themselves) — the same class of limitation already disclosed for other Tier A captures in this paper where the native frames carry no string content. This is noted for precision, not to weaken the finding: the mechanism (unbounded text shaping/measurement blocking the main thread) is confirmed regardless of exact payload provenance.</p>
+
+<h1 id="duck">14. STA-022 — DuckDuckGo</h1>
+<p><strong>STA-022</strong>: URL_EXTRA_ARG of ~920 KB stored in Fragment arguments produces a 965 KB parcel → TransactionTooLargeException (Tier A). <strong>STA-022b</strong>: history suggestion pipeline ANR that survives across sessions until history is cleared.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 14b. STA-023 SAMSUNG INTERNET DETAIL                          -->
+<!-- ============================================================ -->
+<h1 id="samsung">14b. STA-023 — Samsung Internet: Three Failure Modes</h1>
+<div class="ib ib-gry">
+<p><strong>Evidence tier note.</strong> Unlike STA-019 (Firefox), the three STA-023 sub-variants below are documented at the level of observed behaviour — confirmed by the researcher through direct reproduction — rather than captured native stack traces or bugreport-level forensics. They are classified Tier B accordingly. The underlying exception types and call paths have not been independently confirmed via ANR trace or crash log at the time of this disclosure.</p>
+</div>
+<ul>
+<li><strong>STA-023</strong> — Long-pressing a link and selecting <em>Share</em> causes an immediate crash of Samsung Internet.</li>
+<li><strong>STA-023b</strong> — Opening a link in a new tab group causes the browser UI to freeze (no crash, unresponsive UI).</li>
+<li><strong>STA-023c</strong> — Focusing the address bar after the history has been contaminated by a prior oversized URL produces an ANR, consistent with the same address-bar-focus pattern documented for STA-017/019/020/021 in other browsers.</li>
+</ul>
+<p>All three reproduce with the same class of oversized structured input used throughout this paper. Samsung Internet is Chromium-based; STA-023c in particular is consistent with the shared omnibox/history-suggestion pipeline weakness discussed in Section 13 (STA-020/021), suggesting Samsung Internet inherits the same unpatched loading-path behaviour rather than exhibiting an independent defect. STA-023 and STA-023b have not been mapped to a specific upstream code path and are reported here as observed, reproducible behaviour pending further forensic capture.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 15. iOS                                                       -->
+<!-- ============================================================ -->
+<h1 id="ios">15. Cross-Platform Validation — iOS Not Affected</h1>
+<div class="ib ib-grn">
+<p><strong>Same payload does NOT crash Threads for iOS.</strong> Same app, same 20 000-character deep link, zero crash on iOS. Failure is isolated to Android-specific components: Binder (1 MB limit), TaskPersister, FragmentManager.restoreAllState(). The fix must come from Google / AOSP.</p>
+</div>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 16. FIXES                                                     -->
+<!-- ============================================================ -->
+<h1 id="fixes">16. Recommended Fixes</h1>
+
+<p><strong>Proposed mitigations</strong> (not observed factory behaviour). Code samples below are suggestions for framework and application owners; they have not been merged upstream as of the July 2026 bulletin.</p>
+
+<h2>16.1 Framework — Class B (libminikin)</h2>
+<p><strong>Listing 2.</strong> Proposed length thresholds before Optimal/Greedy line breaking.</p>
+<pre>
+// CORRECTED FIX — LineBreakOptimizer.cpp (libminikin.so)
+// Previous “switch to greedy only” is incomplete: breakLineGreedy also blocks.
+
+LineBreakResult LineBreakOptimizer::computeBreaks(...) {
+    const int textLength = end - start;
+
+    // THRESHOLD 1 (HARD): Truncate before any algorithm runs.
+    // Neither algorithm produces useful results for text > 8 KB of URL/text.
+    if (textLength > MAX_SAFE_TEXT_LENGTH_ABSOLUTE) {
+        end = start + MAX_SAFE_TEXT_LENGTH_ABSOLUTE;
+    }
+
+    // THRESHOLD 2: Prefer O(n) greedy for medium-length text.
+    if ((end - start) > MAX_SAFE_TEXT_LENGTH_FOR_OPTIMIZER) {
+        return computeBreaksGreedy(measured, start, end, constraints);
+    }
+
+    return computeBreaksOptimal(measured, start, end, constraints);
+}
+
+// Units are UTF-16 code units (Java/Android char), NOT bytes.
+static const int MAX_SAFE_TEXT_LENGTH_ABSOLUTE     = 8192;  // hard truncate
+static const int MAX_SAFE_TEXT_LENGTH_FOR_OPTIMIZER = 2048;  // switch to greedy
+</pre>
+
+<h2>16.2 Framework — Class A (FragmentManager / SystemUI)</h2>
+<ul>
+<li>Catch TransactionTooLargeException inside FragmentManager.restoreAllState() and start clean.</li>
+<li>Validate derived state size before persistence (TaskPersister, SavedStateRegistry).</li>
+<li>SystemUI and OEM components must treat restored task lists as potentially toxic and degrade gracefully (do not crash the whole UI process).</li>
+</ul>
+
+<h2>16.3 Application-level (immediate workarounds)</h2>
+<pre>
+// Truncate any text displayed in a TextView
+public static String safeForTextView(String text) {
+    final int MAX = 8192;
+    if (text == null) return null;
+    return text.length() > MAX ? text.substring(0, MAX) + "..." : text;
+}
+
+// Reject oversized VIEW Intents
+if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+    Uri data = intent.getData();
+    if (data != null && data.toString().length() > 50_000) {
+        Log.w(TAG, "Incoming VIEW Intent URL exceeds safe length — discarding");
+        finish();
+        return;
+    }
+}
+</pre>
+
+<div class="ib ib-red">
+<p><strong>Coverage warning for CISOs:</strong> Updating to androidx.savedstate 1.5.0 does <strong>NOT</strong> protect against STA-015-DL (SystemUI), STA-015/015b, STA-017 (libminikin) or STA-019 (Firefox pipeline). Those require AOSP-level changes that only Google can ship.</p>
+</div>
+
+<h2>16.4 Generic System UI / OEM Resiliency Pattern (STA-015b)</h2>
+<p>HyperOS component <code>OEM Task State Interactor</code> re-subscribes to task info after SystemUI restart and re-reads corrupt state. Safe degradation on <code>DeadObjectException</code> prevents the automatic second crash loop:</p>
+<pre>
+// STA-015b — Xiaomi / HyperOS OEM fix
+// OEM Task State Interactor: safe degradation when TaskManager is dead
+
+val focusedTaskFlow = interactor.getFocusedRootTaskInfoFlow()
+    .catch { exception ->
+        if (exception is DeadObjectException) {
+            Log.e("SystemUI", "TaskManager service is dead. Resubscribing later.")
+            emit(null) // Safe degradation — do not crash SystemUI
+        } else {
+            throw exception
+        }
+    }
+</pre>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 17. VENDOR STATUS                                             -->
+<!-- ============================================================ -->
+<h1 id="vendor">17. Vendor Notification Status</h1>
+<table>
+<tr><th>Vendor</th><th>First notification</th><th>Response / validation</th><th>Patch status (Jul 2026)</th></tr>
+<tr><td>Xiaomi</td><td>2026</td><td>Reproduced, confirmed, rewarded</td><td>OEM-side mitigation feasible</td></tr>
+<tr><td>Google (Android VRP)</td><td>Jan 20, 2026</td><td>Multiple reports; mixed outcomes; appeal 526330835 closed "Not Reproducible" (21 Jul 2026); savedstate 1.5.0 progress</td><td>No public STA patches in Jul bulletin</td></tr>
+<tr><td>Microsoft (MSRC)</td><td>Jan / Jun 2026</td><td>Individual cases (Edge, Bing). STA-027 tracked as VULN-196348 / Case 122975.</td><td>Pending</td></tr>
+<tr><td>Mozilla</td><td>2026</td><td>Reports submitted (Firefox family)</td><td>Pending</td></tr>
+<tr><td>Opera / Brave / DuckDuckGo / Tor</td><td>2026</td><td>Reports submitted; classifications vary</td><td>Pending</td></tr>
+<tr><td>Samsung</td><td>—</td><td>Documented only (no public VRP for this class)</td><td>—</td></tr>
+<tr><td>INCIBE (CNA Spain)</td><td>Jul 2026</td><td>Referred to MITRE (CNA Root for Google). Technical reports and PoCs submitted.</td><td>All STA vectors</td></tr>
+</table>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 18. TIMELINE                                                  -->
+<!-- ============================================================ -->
+<h1 id="timeline">18. Disclosure Timeline</h1>
+
+<p>Research span: <strong>2022 → 30 July 2026</strong>. Primary laboratory device: Xiaomi Redmi Note 14 5G (HyperOS 3.0 / Android 16). Much of the AOSP path analysis was performed from a phone browser reading public source, without a traditional multi-monitor lab setup.</p>
+
+<h2>18.1 2022 — Origin</h2>
+<table>
+<tr><th>Date</th><th>Milestone</th></tr>
+<tr><td>28 Aug 2022</td><td>Original discovery: TransactionTooLargeException / DeadSystemException in Firefox Focus &amp; Nightly (clipboard, share, open-in-app)</td></tr>
+<tr><td>12 Oct 2022</td><td>First public advisory: “Mozilla Firefox Focus and Nightly for Android Remote Crash DoS” (lostmon.blogspot.com)</td></tr>
+<tr><td>Nov 2022</td><td>Chromium Issue <a href="https://issuetracker.google.com/issues/40879254" target="_blank" rel="noopener">40879254</a> opened; security labels removed; partial UX patch; issue remained open</td></tr>
+<tr><td>Nov 2022</td><td>Mozilla Bugzilla #1802594 (S3) opened — still NEW / unresolved as of 2026</td></tr>
+</table>
+
+<h2>18.2 January–April 2026 — Formal investigation</h2>
+<table>
+<tr><th>Date</th><th>Milestone</th></tr>
+<tr><td>20 Jan 2026</td><td>Formal reports to Google Android VRP (<strong>A-477279924</strong>) and Microsoft MSRC. Case A-477279924 received a <strong>$250</strong> VRP reward for the Binder/IPC research area and remained <strong>open, in active triage</strong>, as of this disclosure. A separate Chrome VRP filing covering 27 vectors (Issue 477202817) was closed the <strong>same day</strong> as “Won’t Fix (Intended Behavior)”, on the grounds that the DoS behaviour “is not a security bug in Chrome.”</td></tr>
+<tr><td>Feb 2026</td><td>Whitepaper v4 distributed (27 vectors); STA-015-DL (CVSS 8.6) and STA-015b added</td></tr>
+<tr><td>Mar 2026</td><td>Meta (WhatsApp/Threads) notified — no response (113+ days by July)</td></tr>
+</table>
+
+<h2>18.3 May–June 2026 — Field evidence</h2>
+<table>
+<tr><th>Date</th><th>Milestone</th></tr>
+<tr><td>24 May 2026</td><td>Chrome bugreport: 2 full native ANRs → STA-017 Tier A (libminikin)</td></tr>
+<tr><td>26 May 2026</td><td>SystemUI: <strong>85 crashes in 4 days</strong> on Android 16 (first confirmed)</td></tr>
+<tr><td>31 May 2026</td><td>STA-015-DL remote attack confirmed via Google Drive (<code>callingPackage=com.google.android.apps.docs</code>) — 6 browsers</td></tr>
+<tr><td>10 Jun 2026</td><td>Vendor notifications: Mozilla, Opera, DuckDuckGo, Brave, Tor, Xiaomi (HackerOne)</td></tr>
+<tr><td>10 Jun 2026</td><td>Firefox ANR <strong>16 006 ms</strong> (real Gmail link) → STA-017 Firefox Tier A</td></tr>
+<tr><td>14 Jun 2026</td><td>MSRC responds; requests separate cases; defers framework root cause to Google</td></tr>
+<tr><td>15 Jun 2026</td><td>Google closes libminikin-specific report (524288518) as <strong>“out of scope”</strong> — months after $250 reward</td></tr>
+<tr><td>16 Jun 2026</td><td>Appeal for STA-015-DL (Issue <strong>526330835</strong>) citing CVE-2023-21167 / A-259942964; Opera classifies P5 Informational</td></tr>
+<tr><td><strong>21 Jul 2026</strong></td><td>Google closes appeal 526330835 with classification <strong>"Not Reproducible"</strong> — despite field bugreports reproduced across multiple independent devices documented in this paper (Sections 5, 9)</td></tr>
+<tr><td>19 Jun 2026</td><td>Brave rejects as “upstream / DoS out of scope”</td></tr>
+<tr><td>20 Jun 2026</td><td>Second spontaneous SystemUI crash loop; Edge ANR 25 s later → STA-017 Edge Tier A</td></tr>
+<tr><td>24 Jun 2026</td><td>Three separate MSRC cases filed; blog posts: STA framework + Algorithmic DoS in libminikin</td></tr>
+<tr><td>28 Jun 2026</td><td>Google App: 5 ANR + 3 TransactionTooLargeException in 14 min; <code>breakLineGreedy</code> also vulnerable; first simultaneous Class A+B</td></tr>
+<tr><td>30 Jun 2026</td><td>No public AOSP/Chromium/AndroidX commits addressing documented vectors; June bulletin empty for STA</td></tr>
+</table>
+
+<h2>18.4 July 2026 — Countdown to disclosure</h2>
+<table>
+<tr><th>Date</th><th>Milestone</th></tr>
+<tr><td>5 Jul 2026</td><td>Google Issue #531319203 opened (system_server boot loop / BitmapCache — same architectural pattern)</td></tr>
+<tr><td>6 Jul 2026</td><td><strong>July Android Security Bulletin published — zero patches for any STA vector</strong></td></tr>
+<tr><td>10 Jul 2026</td><td>Blog: “libminikin: 10 años de vulnerabilidad”; Xiaomi device still vulnerable after June patch</td></tr>
+<tr><td>11 Jul 2026</td><td>Mozilla Bugzilla #2046725 opened for Firefox family</td></tr>
+<tr><td>16 Jul 2026</td><td>Xiaomi confirms vulnerability and awards bounty ($300 via HackerOne)</td></tr>
+<tr><td>Jul 2026</td><td>STA-027 (Edge Ask Copilot) documented; INCIBE (CNA Spain) reviewed the case and referred it to MITRE for CVE assignment</td></tr>
+<tr><td><strong>30 Jul 2026</strong></td><td><strong>Public whitepaper disclosure — lostmon.blogspot.com</strong></td></tr>
+<tr><td>4 Aug 2026</td><td>Researcher sends the Android Security Team a post-publication correlation analysis mapping the August Android Security Bulletin and the July Chromium patch set against STA surfaces. The Android Security Team replies the same day confirming the analysis was shared with engineering and that the team is <strong>"actively looking into this issue and working on a fix,"</strong> with no release date given. Researcher additionally shares an independent cross-vendor PoC for STA-027, already tracked with MSRC as <strong>VULN-196348 / Case 122975</strong>.</td></tr>
+</table>
+
+<div class="ib ib-red">
+<p><strong>July 2026 Security Bulletin — zero mitigation.</strong> Google has not released the internal fix (LargePayloadSupport, AOSP CL 3989977) to the public branch as of the disclosure date. The $250 VRP reward for the Binder/IPC research area stands in contrast to the later “out of scope” classification of the related libminikin report, and the subsequent appeal (Issue 526330835) was closed on July 21, 2026 with the classification <strong>“Not Reproducible”</strong> — a determination at odds with the field bugreports reproduced across multiple independent devices documented throughout this paper.</p>
+
+<div class="ib ib-gry">
+<p><strong>Repository verification, as of the disclosure date (30 Jul 2026).</strong> Direct inspection of the upstream repositories confirms no relevant patch activity in either the Class A or Class B components documented in this paper:</p>
+<ul>
+<li><strong>platform/frameworks/minikin</strong> (libminikin.so) — the most recent substantive commit (<code>05a978c</code>, "Merge 25Q1 to AOSP main") is <strong>7 months old</strong>. No commit in this window touches <code>LineBreaker.cpp</code>, <code>GreedyLineBreaker.cpp</code>, or introduces any input-length threshold in the line-breaking pipeline.</li>
+<li><strong>androidx.fragment</strong> — the most recent release, <strong>1.9.0-rc01, shipped July 29, 2026</strong> (the day before this disclosure), contains a single bug fix scoped to <code>FragmentScenario.launchInContainer</code> testing behavior. It does not touch <code>restoreAllState()</code>, does not add a <code>TransactionTooLargeException</code> safe-fallback, and does not reference the Class A root cause discussed in this paper.</li>
+<li><strong>Chrome Stable (July 29, 2026, 370 CVEs)</strong> — every fixed CVE reviewed falls into standard memory-safety categories (use-after-free, type confusion, uninitialized use, integer/buffer overflow) or the generic "insufficient validation of untrusted input" label applied broadly across unrelated components (Print Preview, Clipboard, WebView, Passwords, Cast, etc.). None references performance, ANR, or resource-exhaustion behavior consistent with the STA-017 mechanism.</li>
+</ul>
+<p>In short: as of the moment this paper is published, no upstream commit in any of the three repositories most relevant to this research addresses the root causes described herein.</p>
+</div>
+</div>
+
+<div class="ib ib-gry">
+<p><strong>September 2026 Android Security Bulletin — correlation analysis.</strong> The September 2026 bulletin (<code>frameworks/base</code> component) was reviewed against the STA vector catalogue using the same methodology applied to the July and August bulletins in this paper: matching affected files/classes and CWE categories against the STA amplification model, explicitly distinguishing what such matches do and do not establish.</p>
+<p><strong>What the correlation shows:</strong> Several September patches touch components in the same general amplification-relevant category (CWE-770 Allocation of Resources Without Limits, CWE-400 Uncontrolled Resource Consumption, and IPC/Binder-adjacent classes) as the STA root causes documented in this paper. None of the September CVE entries name <code>libminikin</code>, <code>FragmentManager</code>, <code>breakLineOptimal</code>, <code>breakLineGreedy</code>, or <code>TransactionTooLargeException</code> directly.</p>
+<p><strong>What this does <em>not</em> establish:</strong> matching CWE category or component family is not equivalent to confirming the same code path, and this paper does not claim the September bulletin patches any STA vector. As with the CDN Tsunami analysis (external corroboration, Appendix I) and the July Chromium correlation (Section 7.4), this is presented as <em>circumstantial, pattern-level</em> evidence that resource-exhaustion-class IPC/serialization issues remain an active area of AOSP patching activity in the same architectural neighbourhood as STA — not as proof that Google has patched, or is aware of, the specific vectors in this paper via this bulletin.</p>
+</div>
+
+<p class="small" style="font-size:11px;color:#666;">Full narrative timeline and related articles: <a href="https://lostmon.blogspot.com/2026/07/timeline-investigacion-sta-estilos.html" target="_blank" rel="noopener">Timeline STA</a> · <a href="https://lostmon.blogspot.com/2026/07/desafiar-android-desde-el-sofa-y-un.html" target="_blank" rel="noopener">Research story</a> · <a href="https://lostmon.blogspot.com/2026/07/libminikin-10-anos-de-vulnerabilidad-en_0671440346.html" target="_blank" rel="noopener">libminikin 10 years</a> · <a href="https://lostmon.blogspot.com/2026/06/algorithmic-dos-en-libminikinso.html" target="_blank" rel="noopener">Algorithmic DoS</a> · <a href="https://lostmon.blogspot.com/2026/06/structured-text-amplification-sta.html" target="_blank" rel="noopener">STA framework</a></p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 19. GLOSSARY                                                  -->
+<!-- ============================================================ -->
+<h1 id="glossary">19. Glossary</h1>
+<table>
+<tr><th>Term</th><th>Definition</th></tr>
+<tr><td><strong>STA</strong></td><td>Structured Text Amplification — architectural pattern of progressive resource amplification from structured textual input.</td></tr>
+<tr><td><strong>Class A</strong></td><td>IPC / SavedState amplification: Bundle exceeds Binder limit → crash loop.</td></tr>
+<tr><td><strong>Class B</strong></td><td>Interaction-surface amplification: libminikin line-breaking blocks UI thread → ANR.</td></tr>
+<tr><td><strong>Binder</strong></td><td>Android IPC mechanism; hard transaction limit 1 048 576 bytes.</td></tr>
+<tr><td><strong>TaskPersister</strong></td><td>Framework component that persists task/activity state to disk for restoration.</td></tr>
+<tr><td><strong>SavedState / FragmentManager.restoreAllState()</strong></td><td>AndroidX/AOSP path that restores Fragment hierarchy from a Bundle after process death.</td></tr>
+<tr><td><strong>libminikin</strong></td><td>Native Android text layout library (line breaking, measurement); used by TextView and others.</td></tr>
+<tr><td><strong>LineBreakOptimizer::computeBreaks</strong></td><td>Optimal (often O(n²)) line-breaking path inside libminikin.</td></tr>
+<tr><td><strong>SystemUI</strong></td><td>Privileged process that owns status bar, navigation bar, lockscreen, recent tasks.</td></tr>
+<tr><td><strong>OEM Task State Interactor</strong></td><td>Xiaomi HyperOS OEM component that re-subscribes to task focus state after SystemUI restart.</td></tr>
+<tr><td><strong>LargePayloadSupport</strong></td><td>Internal Google/AOSP work (CL 3989977) to pass large payloads via file descriptors instead of Binder.</td></tr>
+<tr><td><strong>TransactionTooLargeException</strong></td><td>Exception thrown when a Parcel/Binder transaction exceeds the 1 MB limit.</td></tr>
+<tr><td><strong>ANR</strong></td><td>Application Not Responding — main thread blocked beyond the watchdog threshold (~5 s).</td></tr>
+<tr><td><strong>NavGraph (Compose)</strong></td><td>Jetpack Compose Navigation graph; routes must be direct children of the declared graph.</td></tr>
+</table>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 20. LIMITATIONS AND FUTURE WORK                               -->
+<!-- ============================================================ -->
+<h1 id="limitations">20. Limitations and Future Work</h1>
+<ul>
+<li>Research conducted on production consumer devices; no privileged access to proprietary vendor source beyond AOSP.</li>
+<li>Exact behaviour varies with Android version, OEM customisations, available memory and security patches.</li>
+<li>Not every documented vector has received independent vendor confirmation.</li>
+<li>STA is proposed as a working architectural model derived from empirical observations. Its ultimate validity depends on independent reproduction and critical review.</li>
+</ul>
+
+<h2>20.1 Future work</h2>
+<ul>
+<li>Formal mathematical modelling of amplification thresholds (Class A nesting depth vs Bundle size; Class B character-composition cost).</li>
+<li>Automated detection of STA-style execution paths (static analysis + dynamic instrumentation).</li>
+<li>Broader cross-platform comparison (further iOS controls; other mobile OS text pipelines).</li>
+<li>Upstream-ready patches for libminikin length thresholds and SystemUI safe degradation.</li>
+</ul>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- 21. CONCLUSION                                                -->
+<!-- ============================================================ -->
+<h1 id="conclusion">21. Conclusion</h1>
+
+<p>What initially appeared to be isolated denial-of-service conditions gradually revealed recurring architectural characteristics shared by otherwise unrelated execution paths. These observations motivated the introduction of the Structured Text Amplification (STA) model.</p>
+
+<p>The primary contributions of this work are:</p>
+<ol>
+<li>Introduction of STA as an architectural framework for analysing structured input propagation across Android.</li>
+<li>Documentation of 32 reproducible vectors spanning Class A (IPC/SavedState) and Class B (libminikin) mechanisms, with full technical evidence.</li>
+<li>Correlation of apparently independent behaviours through execution-path analysis rather than symptom comparison.</li>
+<li>Concrete evidence (native stack traces from production devices, AOSP commit references, field crash statistics) supporting the most severe findings, including remote SystemUI crash loops (CVSS 8.6).</li>
+<li>Proposal of layered defensive strategies that address amplification at the architectural level.</li>
+</ol>
+
+<div class="quote">
+Structured Text Amplification was not discovered in a single experiment. It emerged progressively through months of observation, reverse engineering, responsible disclosure and repeated empirical validation. The vectors documented in this whitepaper should therefore be understood not merely as isolated software behaviours, but as the experimental foundation from which the STA model was derived.
+</div>
+
+<p>Whether future research confirms, refines or challenges this model, the underlying observations remain reproducible technical evidence.</p>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- REFERENCES                                                    -->
+<!-- ============================================================ -->
+<h1 id="refs">References</h1>
+<ol>
+<li>Chromium commit 3e62ece6 (LargePayloadSupport), May 2026: <a href="https://chromium.googlesource.com/chromium/src/+/3e62ece6" target="_blank" rel="noopener">chromium.googlesource.com/chromium/src/+/3e62ece6</a></li>
+<li>Google Issue Tracker 40879254 (2022): <a href="https://issuetracker.google.com/issues/40879254" target="_blank" rel="noopener">issuetracker.google.com/issues/40879254</a></li>
+<li>Google Issue Tracker 40268979 / related Samsung Chrome ANR (2023): <a href="https://issuetracker.google.com/issues/40268979" target="_blank" rel="noopener">issuetracker.google.com/issues/40268979</a></li>
+<li>AOSP minikin repository: <a href="https://android.googlesource.com/platform/frameworks/minikin/" target="_blank" rel="noopener">android.googlesource.com/platform/frameworks/minikin/</a></li>
+<li>androidx.savedstate 1.5.0 / Bug #425919375 (SavedState serialization)</li>
+<li>Android Open Source Project — FragmentManager, TaskPersister, WindowManager Shell</li>
+<li>Android Security Bulletins (historical Minikin resource-exhaustion ANR notes)</li>
+<li>Lostmon — Structured Text Amplification (STA), 23 Jun 2026: <a href="https://lostmon.blogspot.com/2026/06/structured-text-amplification-sta.html" target="_blank" rel="noopener">lostmon.blogspot.com/2026/06/structured-text-amplification-sta.html</a></li>
+<li>Lostmon — Algorithmic DoS en libminikin.so, 24 Jun 2026: <a href="https://lostmon.blogspot.com/2026/06/algorithmic-dos-en-libminikinso.html" target="_blank" rel="noopener">lostmon.blogspot.com/2026/06/algorithmic-dos-en-libminikinso.html</a></li>
+<li>Lostmon — libminikin: 10 años de vulnerabilidad, 10 Jul 2026: <a href="https://lostmon.blogspot.com/2026/07/libminikin-10-anos-de-vulnerabilidad-en_0671440346.html" target="_blank" rel="noopener">lostmon.blogspot.com/2026/07/libminikin-10-anos-de-vulnerabilidad-en_0671440346.html</a></li>
+<li>Lostmon — Timeline investigación STA, 12 Jul 2026: <a href="https://lostmon.blogspot.com/2026/07/timeline-investigacion-sta-estilos.html" target="_blank" rel="noopener">lostmon.blogspot.com/2026/07/timeline-investigacion-sta-estilos.html</a></li>
+<li>Lostmon — Desafiar Android desde el sofá, 17 Jul 2026: <a href="https://lostmon.blogspot.com/2026/07/desafiar-android-desde-el-sofa-y-un.html" target="_blank" rel="noopener">lostmon.blogspot.com/2026/07/desafiar-android-desde-el-sofa-y-un.html</a></li>
+</ol>
+
+<hr class="thick">
+
+<!-- ============================================================ -->
+<!-- APPENDIX I                                                    -->
+<!-- ============================================================ -->
+<h1 id="appI">Appendix I — Additional External Corroboration (July 2026)</h1>
+
+<p>Google has publicly acknowledged, across multiple Android version cycles (4.4.2, 7.1, 8.1, 9.0), that Minikin is vulnerable to resource-exhaustion ANR triggered by attacker-controlled text content. The phenomenon matches the general failure category documented throughout this paper (STA-017 and related vectors).</p>
+
+<p>An independent Chinese-language technical article (Volcengine, May 2026) describes the same practical symptom from an application-developer perspective and recommends truncating input to a bounded size in the 8–32 KB range — consistent with the 8192 UTF-16 code-unit threshold proposed here.</p>
+
+<p>androidx.savedstate 1.5.0 addresses part of Class A for AndroidX consumers but does not cover SystemUI, TaskPersister, libminikin or OEM layers. The most severe vectors still require AOSP-level changes.</p>
+
+<div class="ib ib-blu">
+<p><strong>CNA referral note (INCIBE → MITRE).</strong> On July 14, 2026, INCIBE (Spain's national CSIRT and CVE Numbering Authority) was contacted for CVE assignment across the STA vectors documented in this paper. After internal review, INCIBE formally responded that the affected components fall under MITRE's jurisdiction as the CNA Top-Level Root for the Google ecosystem, and referred the case accordingly. The full whitepaper and supporting evidence are being submitted to MITRE upon public disclosure (July 30, 2026).</p>
+</div>
+
+<div class="ib ib-grn">
+<p><strong>CWE submission (October 2026).</strong> A formal CWE (Common Weakness Enumeration) proposal was submitted to the MITRE-maintained CWE-CAPEC Content Development Repository on October 11, 2026, titled <em>"Unbounded Structured-State Propagation Across Processing Layers"</em> (submission ID <code>ES2610-0b2ea35d</code>, tracked publicly as <a href="https://github.com/CWE-CAPEC/CWE-Content-Development-Repository/issues/228" target="_blank" rel="noopener">Issue #228</a>). The proposal generalizes the STA root-cause pattern — unvalidated structured state crossing and re-materializing across multiple processing layers (IPC, persistence, rendering) — independent of any specific serialization format, OS, or IPC mechanism, explicitly distinguishing it from single-operation resource exhaustion. As of this writing the submission has reached <strong>Phase02 (acknowledged receipt)</strong> in MITRE's intake process; it has not yet been assigned a CWE ID or advanced to content review. This is reported as a pending submission, not an approved classification.</p>
+</div>
+
+<div class="ib ib-gry">
+<p><strong>Note on external PoC activity.</strong> The researcher has been made aware of a public proof-of-concept tracked as CVE-2026-10702, reportedly addressing a related class of Android text-rendering denial-of-service behaviour. This paper has not independently verified the technical content of that CVE record or confirmed a direct mechanism overlap with the STA-017 vectors documented here. It is noted for context as a potential independent data point on the broader visibility of this vulnerability class, not as corroborated evidence within this paper's chain of proof.</p>
+</div>
+
+<hr class="thick">
+<h1 id="appII">Appendix II — Vendor Conduct &amp; Acknowledgements: Xiaomi</h1>
+<p>While many vendors either dismissed the reports through procedural classifications or ignored them entirely, Xiaomi demonstrated that it is entirely possible to:</p>
+<ul>
+<li>Recognize a systemic issue without disclaiming responsibility.</li>
+<li>Deploy OEM-level mitigations while awaiting upstream fixes from AOSP.</li>
+<li>Value and support the work of independent security researchers.</li>
+<li>Conduct responsible disclosure with transparency, professionalism, and technical competence.</li>
+</ul>
+
+<h2>Acknowledgements</h2>
+<p>High-level vector behavior for STA-015 and STA-015b is documented in this paper for architectural completeness. However, specific internal component names, proprietary code traces, and exact patch implementations have been intentionally withheld out of respect for Xiaomi's internal patching process and in accordance with responsible disclosure agreements.</p>
+<p>The researcher wishes to express sincere appreciation to Xiaomi's Security Team for their professionalism, technical rigor, and commitment to protecting their user base.</p>
+<div class="ib ib-grn">
+<p>Xiaomi demonstrated that it is possible to do the right thing — even when the underlying issue originates beyond your immediate framework layers.</p>
+</div>
+
+<hr>
+<p style="text-align:center;margin-top:40px;font-size:12px;color:#666;">
+<strong>Structured Text Amplification (STA)</strong><br>
+Unified Architectural + Full Technical Whitepaper<br>
+© 2026 Manuel García Peña (Lostmon)<br>
+Public disclosure: 30 July 2026 · lostmon.blogspot.com
+</p>
+
+</div>
+</body>
+</html>
